@@ -25,7 +25,7 @@
       /**
        * Method to start the magic.
        *
-       * @returns {void}
+       * @return {void}
        */
       QuickPay.prototype.init = function () {
         var self = this;
@@ -46,7 +46,7 @@
        * @param {string} action - the request action type
        * @param {function} callbackHandler - method to handle the response
        *
-       * @returns {void}
+       * @return {void}
        */
       QuickPay.prototype.request = function (action, callbackHandler) {
         var self = this;
@@ -60,8 +60,8 @@
           transaction_id: this.transaction_id,
           order_id: this.order_id,
           payment_module: this.payment_module
-          },
-          function(response) {
+        },
+          function (response) {
             // Process callback.
             callbackHandler(response, self);
 
@@ -76,7 +76,7 @@
        * @param {object} response - API response
        * @param {object} self - QuickPay
        *
-       * @returns {void}
+       * @return {void}
        */
       QuickPay.prototype.handleResponse = function (response, self) {
         var lastOperationType = self.getLastOperation(response.operations);
@@ -98,7 +98,7 @@
        *
        * @param {object} operations The operations object
        *
-       * @returns {string} The last operation
+       * @return {string} The last operation
        */
       QuickPay.prototype.getLastOperation = function (operations) {
         return operations[operations.length - 1].type;
@@ -109,7 +109,7 @@
        *
        * @param {string} operationType Transaction operation type
        *
-       * @returns {void}
+       * @return {void}
        */
       QuickPay.prototype.updateButtons = function (operationType) {
         var self = this;
