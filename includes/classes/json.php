@@ -1,26 +1,44 @@
 <?php
+/**
+ * @file
+ * QuickpayPaymentJSON class.
+ */
 
-class QuickpayPayment_JSON {
-	
-	/**
-	 * error
-	 * 
-	 * @param  array $message
-	 * @return JSON object
-	 */
-	public static function error( $message ) {
-		return json_encode( array(
-			'status' => 'error',
-			'message' => $message
-		) );
-	}
+/**
+ * QuickpayPaymentJSON.
+ *
+ * @since 1.0.0
+ *
+ * @package QuickPay
+ *
+ * @category Class
+ */
+class QuickpayPaymentJSON {
 
-	/**
-	 * from_array
-	 * @param  array $array
-	 * @return JSON object
-	 */
-	public static function from_array( $array ) {
-		return json_encode( $array );
-	}
+  /**
+   * Returns an error response object.
+   *
+   * @param string $message
+   *         The error message.
+   *
+   * @return object
+   *         JSON object.
+   */
+  public static function error($message) {
+    return json_encode(array(
+      'status' => 'error',
+      'message' => $message,
+    ));
+  }
+
+  /**
+   * From_array.
+   *
+   * @return object
+   *         JSON object.
+   */
+  public static function fromArray($array) {
+    return json_encode($array);
+  }
+
 }
