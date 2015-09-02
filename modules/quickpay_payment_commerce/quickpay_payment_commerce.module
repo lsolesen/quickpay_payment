@@ -428,7 +428,7 @@ function quickpay_payment_commerce_form_commerce_checkout_form_alter(&$form, &$f
 	if (!empty($form['commerce_payment']['payment_method']['#options'])) {
 		// Loop over its options array looking for a quickpay_payment_commerce option.
 		foreach ($form['commerce_payment']['payment_method']['#options'] as $key => &$value) {
-			list($method_id, $rule_name) = explode('|', $key);
+			list($method_id) = explode('|', $key);
 
 			// If we find Quickpay...
 			if ($method_id == 'quickpay_payment_commerce') {
