@@ -11,59 +11,60 @@
         this.test = $('#quickpay_payment__test');
         this.button_container = $('.quickpay_payment_buttons');
         this.payment_module = this.container.data('quickpay-gateway');
-  
+
         this.button_capture = this.button_container.children('[data-quickpay-action="capture"]');
         this.button_cancel = this.button_container.children('[data-quickpay-action="cancel"]');
         this.button_refund = this.button_container.children('[data-quickpay-action="refund"]');
       }
 
-/**
-* init
-* @return void 
-*/
-QuickPay.prototype.init = function () {
-var self = this;
+      /**
+      * init
+      * @return void 
+      */
+      QuickPay.prototype.init = function () {
+        var self = this;
 
-// Retrieve transaction status
-this.request('status', this.handleResponse);
+        // Retrieve transaction status
+        this.request('status', this.handleResponse);
 
-// Add event handlers to action buttons
-this.button_container.children('[data-quickpay-action]').click(function(e) {
-e.preventDefault();
-self.request($(this).data('quickpay-action'), self.handleResponse);
-});
-};
+        // Add event handlers to action buttons
+        this.button_container.children('[data-quickpay-action]').click(function(e) {
+          e.preventDefault();
+          self.request($(this).data('quickpay-action'), self.handleResponse);
+        });
+      };
 
 
-/**
-* request 
-*
-* Perform API requests 
-* 
-* @param  string action - the request action type         	
-* @param  function callbackHandler - method to handle the response
-* @return 
-*/
-QuickPay.prototype.request = function (action, callbackHandler) {
-var self = this;
+      /**
+      * request 
+      *
+      * Perform API requests 
+      * 
+      * @param  string action - the request action type         	
+      * @param  function callbackHandler - method to handle the response
+      * @return 
+      */
+      QuickPay.prototype.request = function (action, callbackHandler) {
+        var self = this;
 
-// Add loader
-self.container.addClass('loading');
+        // Add loader
+        self.container.addClass('loading');
 
-// Perform request
-$.getJSON(Drupal.settings.basePath + 'quickpay-payment/ajax', { 
-'action' : action,
-'transaction_id' : this.transaction_id,
-'order_id' : this.order_id,
-'payment_module' : this.payment_module
-}, function(response) {
-// Process callback
-callbackHandler(response, self);
+        // Perform request
+        $.getJSON(Drupal.settings.basePath + 'quickpay-payment/ajax', { 
+          'action' : action,
+          'transaction_id' : this.transaction_id,
+          'order_id' : this.order_id,
+          'payment_module' : this.payment_module
+          }, 
+        function(response) {
+            // Process callback
+            callbackHandler(response, self);
 
-// Remove loader
-self.container.removeClass('loading');
-});
-};
+            // Remove loader
+            self.container.removeClass('loading');
+        });
+      };
 
 
 /**
