@@ -54,9 +54,9 @@
 
 @media (min-width: 768px) {
   #edit-parameter-payment-method-settings-payment-method-settings-payment-methods > div {
-    float:left;
-    width:50%;
-    box-sizing:border-box;
-    padding:5px 15px;
-  }	
+    float: left;
+    width: 50%;
+    box-sizing: border-box;
+    padding: 5px 15px;
+  }
 }
