@@ -22,18 +22,18 @@ module_load_include('php', 'quickpay_payment', 'includes/classes/json');
  * Implements hook_init()
  */
 function quickpay_payment_init() {
-
+	$path = drupal_get_path('module', 'quickpay_payment');
+	if (user_access('administer modules') && path_is_admin(current_path())) {
+		drupal_add_js($path . '/quickpay_payment.admin.js');
+		drupal_add_css($path . '/quickpay_payment.admin.css');
+	} else {
+		drupal_add_js($path . '/quickpay_payment.js');
+		drupal_add_css($path . '/quickpay_payment.css');
+	}
 }
 
 function quickpay_payment_page_build(&$page) {
-		$path = drupal_get_path('module', 'quickpay_payment');
-		if (user_access('administer modules') && path_is_admin(current_path())) {
-				drupal_add_js($path . '/quickpay_payment.admin.js');
-				drupal_add_css($path . '/quickpay_payment.admin.css');
-		} else {
-				drupal_add_js($path . '/quickpay_payment.js');
-				drupal_add_css($path . '/quickpay_payment.css');
-		}
+	
 }
 
 /**
@@ -46,15 +46,29 @@ function quickpay_payment_page_build(&$page) {
  * @return array - the endpoint data
  */
 function quickpay_payment_menu() {
-		$items = array();
-		$items['quickpay-payment/ajax'] = array(
-				'page callback' => 'quickpay_payment_ajax',
-				'page arguments' => array(),
-				'access callback' => 'quickpay_payment_ajax_secure',
-				'type' => MENU_CALLBACK,
-		);
+	$items = array();
+	$items['quickpay-payment/ajax'] = array(
+		'page callback' => 'quickpay_payment_ajax',
+		'page arguments' => array(),
+		'access callback' => 'quickpay_payment_ajax_secure',
+		'type' => MENU_CALLBACK,
+	);
 
-		return $items;
+	return $items;
+}
+
+function quickpay_payment_element_info() {
+  $types['quickpay_payment_method'] = array(
+	'#input' => TRUE,
+	'#process' => array(''),
+	'#after_build' => array(''),
+	'#attached' => array(
+	  'js' => array(
+		drupal_get_path('module', 'quickpay_payment') . '/quickpay_payment.admin.js',
+	  ),
+	),
+  );
+  return $types;
 }
 
 
@@ -66,9 +80,9 @@ function quickpay_payment_menu() {
  * @return array - the endpoint data
  */
 function quickpay_payment_ajax_secure() {
-		global $user;
-		// Check to see if $user has the administrator role.
-		return in_array('administrator', array_values($user->roles));
+	global $user;
+	// Check to see if $user has the administrator role.
+	return in_array('administrator', array_values($user->roles));
 }
 
 /**
@@ -80,33 +94,33 @@ function quickpay_payment_ajax_secure() {
  * @throws Exception 
  */
 function quickpay_payment_ajax() {
-		try 
-		{
-				$post = (object) $_REQUEST;
+	try 
+	{
+		$post = (object) $_REQUEST;
 
-				if( ! isset($post->transaction_id) ) 
-				{
-						throw new Exception( t("Invalid request: Transaction ID is missing") );
-				}
-				if( ! isset($post->order_id) ) 
-				{
-						throw new Exception( t("Invalid request: Order ID is missing") );
-				}
-				if( ! isset($post->payment_module) ) 
-				{
-						throw new Exception( t("Invalid request: Payment method is missing") );
-				}
-				if( ! isset($post->action) ) {
-						throw new Exception( t("Invalid request: Action is missing") );
-				}
-
-				module_invoke($post->payment_module, 'quickpay_payment_ajax_handler', $post->action, $post->transaction_id, $post->order_id);
-		}
-		catch( Exception $e )
+		if( ! isset($post->transaction_id) ) 
 		{
-				echo QuickPay_JSON::error( $e->getMessage() );
-				exit;
+			throw new Exception( t("Invalid request: Transaction ID is missing") );
 		}
+		if( ! isset($post->order_id) ) 
+		{
+			throw new Exception( t("Invalid request: Order ID is missing") );
+		}
+		if( ! isset($post->payment_module) ) 
+		{
+			throw new Exception( t("Invalid request: Payment method is missing") );
+		}
+		if( ! isset($post->action) ) {
+			throw new Exception( t("Invalid request: Action is missing") );
+		}
+
+		module_invoke($post->payment_module, 'quickpay_payment_ajax_handler', $post->action, $post->transaction_id, $post->order_id);
+	}
+	catch( Exception $e )
+	{
+		echo QuickpayPayment_JSON::error( $e->getMessage() );
+		exit;
+	}
 
 }
 
@@ -119,22 +133,22 @@ function quickpay_payment_ajax() {
  * @return string - HTML output
  */
 function quickpay_payment_api_view($order_id, $transaction_id, $payment_module) {
-		$html = '<div id="quickpay_payment" class="quickpay_payment" data-quickpay-gateway="'. $payment_module .'">';
-				$html .= sprintf('<h1>%s</h1>', t('QuickPay API') );
-				$html .= sprintf('<div class="%s"><strong>%s:</strong> <span id="quickpay_payment__order-id">%s</span></div>', '', t('Order ID'), $order_id);
-				$html .= sprintf('<div class="%s"><strong>%s:</strong> <span id="quickpay_payment__transaction-id">%s</span></div>', '', t('Transaction ID'), $transaction_id);
-				$html .= sprintf('<div class="%s"><strong>%s:</strong> <span id="quickpay_payment__status"></span></div>', '', t('Last Payment Operation'));
-				$html .= sprintf('<div id="quickpay_payment__test">%s</div>', t('TEST TRANSACTION'));
+	$html = '<div id="quickpay_payment" class="quickpay_payment" data-quickpay-gateway="'. $payment_module .'">';
+		$html .= sprintf('<h1>%s</h1>', t('QuickPay API') );
+		$html .= sprintf('<div class="%s"><strong>%s:</strong> <span id="quickpay_payment__order-id">%s</span></div>', '', t('Order ID'), $order_id);
+		$html .= sprintf('<div class="%s"><strong>%s:</strong> <span id="quickpay_payment__transaction-id">%s</span></div>', '', t('Transaction ID'), $transaction_id);
+		$html .= sprintf('<div class="%s"><strong>%s:</strong> <span id="quickpay_payment__status"></span></div>', '', t('Last Payment Operation'));
+		$html .= sprintf('<div id="quickpay_payment__test">%s</div>', t('TEST TRANSACTION'));
 
-				$html .= '<div class="quickpay_payment_buttons">
-										<h4>API actions</h4>
-										<a href="#" class="button" data-quickpay-action="capture">' . t('Capture') . '</a>
-										<a href="#" class="button" data-quickpay-action="cancel">' . t('Cancel') . '</a>
-										<a href="#" class="button" data-quickpay-action="refund">' . t('Refund') . '</a>
-									</div>';
-		$html .= '</div>';
+		$html .= '<div class="quickpay_payment_buttons">
+					<h4>API actions</h4>
+					<a href="#" class="button" data-quickpay-action="capture">' . t('Capture') . '</a>
+					<a href="#" class="button" data-quickpay-action="cancel">' . t('Cancel') . '</a>
+					<a href="#" class="button" data-quickpay-action="refund">' . t('Refund') . '</a>
+				  </div>';
+	$html .= '</div>';
 
-		return $html;
+	return $html;
 }
 
 
@@ -146,69 +160,69 @@ function quickpay_payment_api_view($order_id, $transaction_id, $payment_module) 
  * @return array 
  */
 function quickpay_payment_cards() {
-		$images_path = drupal_get_path('module', 'quickpay_payment') . '/images/';
-		return array(
-				'dankort' => array(
-						'name' => t('Dankort'),
-						'image' => $images_path . 'dankort.png',
-				),
-				'edankort' => array(
-						'name' => t('eDankort'),
-						'image' => $images_path . 'edankort.png',
-				),
-				'visa' => array(
-						'name' => t('Visa'),
-						'image' => $images_path . 'visa.png',
-				),
-				'visa-electron' => array(
-						'name' => t('Visa Electron'),
-						'image' => $images_path . 'visaelectron.png',
-				),
-				'mastercard' => array(
-						'name' => t('Mastercard'),
-						'image' => $images_path . 'mastercard.png',
-				),
-				'mastercard-debet' => array(
-						'name' => t('Mastercard debet card'),
-						'image' => $images_path . 'mastercard.png',
-				),
-				'maestro' => array(
-						'name' => t('Maestro'),
-						'image' => $images_path . 'maestro.png',
-				),
-				'jcb' => array(
-						'name' => t('JCB'),
-						'image' => $images_path . 'jcb.png',
-				),
-				'diners' => array(
-						'name' => t('Diners'),
-						'image' => $images_path . 'diners.png',
-				),
-				'american-express' => array(
-						'name' => t('American Express'),
-						'image' => $images_path . 'americanexpress.png',
-				),
-				'paypal' => array(
-						'name' => t('PayPal'),
-						'image' => $images_path . 'paypal.png',
-				),
-				'sofort' => array(
-						'name' => t('Sofort'),
-						'image' => $images_path . 'sofort.png',
-				),
-				'viabill' => array(
-						'name' => t('ViaBill'),
-						'image' => $images_path . 'viabill.png',
-				),
-				'paii' => array(
-						'name' => t('Paii'),
-						'image' => $images_path . 'paii.png',
-				),
-				'mobilepay' => array(
-						'name' => t('MobilePay'),
-						'image' => $images_path . 'mobilepay.png',
-				),
-		);
+	$images_path = drupal_get_path('module', 'quickpay_payment') . '/images/';
+	return array(
+		'dankort' => array(
+			'name' => t('Dankort'),
+			'image' => $images_path . 'dankort.png',
+		),
+		'edankort' => array(
+			'name' => t('eDankort'),
+			'image' => $images_path . 'edankort.png',
+		),
+		'visa' => array(
+			'name' => t('Visa'),
+			'image' => $images_path . 'visa.png',
+		),
+		'visa-electron' => array(
+			'name' => t('Visa Electron'),
+			'image' => $images_path . 'visaelectron.png',
+		),
+		'mastercard' => array(
+			'name' => t('Mastercard'),
+			'image' => $images_path . 'mastercard.png',
+		),
+		'mastercard-debet' => array(
+			'name' => t('Mastercard debet card'),
+			'image' => $images_path . 'mastercard.png',
+		),
+		'maestro' => array(
+			'name' => t('Maestro'),
+			'image' => $images_path . 'maestro.png',
+		),
+		'jcb' => array(
+			'name' => t('JCB'),
+			'image' => $images_path . 'jcb.png',
+		),
+		'diners' => array(
+			'name' => t('Diners'),
+			'image' => $images_path . 'diners.png',
+		),
+		'american-express' => array(
+			'name' => t('American Express'),
+			'image' => $images_path . 'americanexpress.png',
+		),
+		'paypal' => array(
+			'name' => t('PayPal'),
+			'image' => $images_path . 'paypal.png',
+		),
+		'sofort' => array(
+			'name' => t('Sofort'),
+			'image' => $images_path . 'sofort.png',
+		),
+		'viabill' => array(
+			'name' => t('ViaBill'),
+			'image' => $images_path . 'viabill.png',
+		),
+		'paii' => array(
+			'name' => t('Paii'),
+			'image' => $images_path . 'paii.png',
+		),
+		'mobilepay' => array(
+			'name' => t('MobilePay'),
+			'image' => $images_path . 'mobilepay.png',
+		),
+	);
 }
 
 
@@ -219,7 +233,7 @@ function quickpay_payment_cards() {
  * @return array                  - selected payment methods
  */
 function quickpay_payment_filter_payment_methods($payment_methods) {
-		return array_filter($payment_methods, function($method) {
-				return $method !== 0;
-		});
+	return array_filter($payment_methods, function($method) {
+		return $method !== 0;
+	});
 }

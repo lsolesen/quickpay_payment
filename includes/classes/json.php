@@ -1,6 +1,6 @@
 <?php
 
-class QuickPay_JSON {
+class QuickpayPayment_JSON {
 	
 	/**
 	 * error

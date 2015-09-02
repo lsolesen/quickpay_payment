@@ -1,5 +1,5 @@
 name = QuickPay Payment Core
-description = Process payments using the QuickPay v10 platform. Core module required by shop dependant modules.
+description = Process payments using the QuickPay v10 platform. Core module required by shop dependent modules.
 package = quickpay-payment
 core = 7.x
 

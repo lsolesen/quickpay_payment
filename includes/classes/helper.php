@@ -1,6 +1,6 @@
 <?php
 
-class QuickPay_Helper {
+class QuickpayPayment_Helper {
 	/**
 	* order_number_standardize function.
 	*

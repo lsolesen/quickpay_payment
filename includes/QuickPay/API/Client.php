@@ -5,7 +5,6 @@ namespace QuickPay\API;
  * @since		1.0.0
  * @package		QuickPay
  * @category	Class
- * @author 		Patrick Tolvstein, Perfect Solution ApS
  * @docs        http://tech.quickpay.net/api/
  */
 class Client 

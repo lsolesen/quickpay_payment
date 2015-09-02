@@ -5,7 +5,6 @@ namespace QuickPay\API;
  * @since		1.0.0
  * @package		QuickPay
  * @category	Class
- * @author 		Patrick Tolvstein, Perfect Solution ApS
  * @docs        http://tech.quickpay.net/api/
  */
 class Response
@@ -147,7 +146,7 @@ class Response
     /**
      * is_success
      * 
-     * Checks if the http status code indicates a succesful or an error response.
+     * Checks if the http status code indicates a successful or an error response.
      * 
      * @return boolean
      */   

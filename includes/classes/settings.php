@@ -1,6 +1,6 @@
  <?php
 
- class QuickPay_Settings {
+ class QuickpayPayment_Settings {
 
  	protected $options;
  	protected $gateway_name;
