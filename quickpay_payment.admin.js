@@ -1,11 +1,8 @@
 /**
  * @file
  * Object to handle the QP Api Behaviour.
- *
- * @param  {object} $ The jQuery Object
- *
- * @returns {void}
  */
+
 (function ($) {
   "use strict";
 
