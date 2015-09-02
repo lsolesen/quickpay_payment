@@ -171,7 +171,7 @@ function commerce_quickpay_payment_redirect_form($form, &$form_state, $order, $p
         if( $payment_response->is_success() ) 
         {
             // Create payment methods string
-            $payment_methods_array = quickpay_filter_payment_methods($settings['payment_methods']);
+            $payment_methods_array = quickpay_payment_filter_payment_methods($settings['payment_methods']);
             $payment_methods = implode(',', $payment_methods_array);
 
             // Get the payment data
