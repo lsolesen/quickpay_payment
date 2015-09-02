@@ -1,13 +1,13 @@
 /**
- * Drupal Commerce 
+ * Drupal Commerce
  */
 .commerce-quickpay-method__icon {
-	position:relative;
-	top:4px;
-	margin-right:5px;
-	max-height:20px;
+  position:relative;
+  top:4px;
+  margin-right:5px;
+  max-height:20px;
 }
 .commerce-quickpay-method__name {
-	display:inline-block;
-	margin-right:15px;
+  display:inline-block;
+  margin-right:15px;
 }
