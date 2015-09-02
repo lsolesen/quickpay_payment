@@ -18,16 +18,16 @@
       }
 
       /**
-      * init
-      * @return void 
-      */
+       * init
+       * @return void
+       */
       QuickPay.prototype.init = function () {
         var self = this;
 
-        // Retrieve transaction status
+        // Retrieve transaction status.
         this.request('status', this.handleResponse);
 
-        // Add event handlers to action buttons
+        // Add event handlers to action buttons.
         this.button_container.children('[data-quickpay-action]').click(function(e) {
           e.preventDefault();
           self.request($(this).data('quickpay-action'), self.handleResponse);
@@ -36,21 +36,21 @@
 
 
       /**
-      * request 
-      *
-      * Perform API requests 
-      * 
-      * @param  string action - the request action type         	
-      * @param  function callbackHandler - method to handle the response
-      * @return 
-      */
+       * request
+       *
+       * Perform API requests
+       *
+       * @param  string action - the request action type
+       * @param  function callbackHandler - method to handle the response
+       * @return
+       */
       QuickPay.prototype.request = function (action, callbackHandler) {
         var self = this;
 
-        // Add loader
+        // Add loader.
         self.container.addClass('loading');
 
-        // Perform request
+        // Perform request.
         $.getJSON(Drupal.settings.basePath + 'quickpay-payment/ajax', { 
           'action' : action,
           'transaction_id' : this.transaction_id,
@@ -58,89 +58,91 @@
           'payment_module' : this.payment_module
           }, 
         function(response) {
-            // Process callback
+            // Process callback.
             callbackHandler(response, self);
 
-            // Remove loader
+            // Remove loader.
             self.container.removeClass('loading');
         });
       };
 
 
-/**
-* handleResponse
-*
-* Handle API responses
-* 
-* @param  object response - API response
-* @param  object self   - QuickPay
-* @return
-*/
-QuickPay.prototype.handleResponse = function (response, self) {
-var lastOperationType = self.getLastOperation(response.operations);
-// Show operation status
-self.last_operation.text(lastOperationType);
+      /**
+       * handleResponse
+       *
+       * Handle API responses
+       * 
+       * @param  object response - API response
+       * @param  object self   - QuickPay
+       * @return
+       */
+      QuickPay.prototype.handleResponse = function (response, self) {
+        var lastOperationType = self.getLastOperation(response.operations);
+        
+        // Show operation status.
+        self.last_operation.text(lastOperationType);
 
-// Visualize transaction test mode
-if (response.test_mode == true) {
-self.test.fadeIn();
-}
+        // Visualize transaction test mode.
+        if (response.test_mode == true) {
+          self.test.fadeIn();
+        }
 
-// Update action buttons view
-self.updateButtons(lastOperationType);
-};
-
-
-/**
-* getLastOperation
-*
-* Returns the type of the last operation
-* 
-* @param  object operations
-* @return string 
-*/
-QuickPay.prototype.getLastOperation = function (operations) {
-return operations[operations.length-1].type;
-};
+        // Update action buttons view.
+        self.updateButtons(lastOperationType);
+      };
 
 
-/**
-* updateButtons
-*
-* Updates the button view depending on the last operation type
-* 
-* @param  string operationType 
-* @return
-*/
-QuickPay.prototype.updateButtons = function (operationType) {
-var self = this;
-if ('authorize' == operationType) {
-this.button_container.fadeIn();
-self.button_capture.show();
-self.button_cancel.show();
-self.button_refund.hide();					
-}
+      /**
+       * getLastOperation
+       *
+       * Returns the type of the last operation
+       *
+       * @param  object operations
+       * @return string
+       */
+      QuickPay.prototype.getLastOperation = function (operations) {
+        return operations[operations.length-1].type;
+      };
 
-if ('capture' == operationType) {
-this.button_container.show();
-this.button_capture.hide();
-this.button_cancel.hide();
-this.button_refund.show();
-}
 
-if (['cancel', 'refund'].indexOf(operationType) > -1) {
-this.button_container.fadeOut();
-}
-};
+      /**
+       * updateButtons
+       *
+       * Updates the button view depending on the last operation type
+       *
+       * @param  string operationType
+       * @return
+       */
+      QuickPay.prototype.updateButtons = function (operationType) {
+        var self = this;
+        if ('authorize' == operationType) {
+          this.button_container.fadeIn();
+          self.button_capture.show();
+          self.button_cancel.show();
+          self.button_refund.hide();			
+        }
 
-$(function() {
-var QP = new QuickPay();
+        if ('capture' == operationType) {
+          this.button_container.show();
+          this.button_capture.hide();
+          this.button_cancel.hide();
+          this.button_refund.show();
+        }
 
-// Init the object if the API container is present
-if (QP.container.length) {
-QP.init();
-}
-});
-}
-};
+        if (['cancel', 'refund'].indexOf(operationType) > -1) {
+          this.button_container.fadeOut();
+        }
+      };
+
+      // Document ready.
+      $(function() {
+        var QP = new QuickPay();
+
+        // Init the object if the API container is present.
+        if (QP.container.length) {
+          QP.init();
+        }
+      });
+    }
+  };
 })(jQuery);
