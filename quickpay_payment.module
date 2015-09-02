@@ -33,7 +33,7 @@ function quickpay_payment_init() {
 }
 
 /**
- * commerce_quickpay_payment_menu 
+ * quickpay_payment_commerce_menu 
  *
  * Implements hook_menu()
  *

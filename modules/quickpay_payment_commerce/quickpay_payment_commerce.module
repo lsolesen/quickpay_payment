@@ -2,18 +2,18 @@
 use QuickPay\QuickPay as QuickPay;
 
 /**
- * commerce_quickpay_payment_commerce_payment_method_info
+ * quickpay_payment_commerce_commerce_payment_method_info
  *
  * Implements hook_commerce_payment_method_info().
  * 
  * @return array - the payment gateway data
  */
-function commerce_quickpay_payment_commerce_payment_method_info() {
+function quickpay_payment_commerce_commerce_payment_method_info() {
     $payment_methods = array();
 
-    $payment_methods['commerce_quickpay_payment'] = array(
-        'base' => 'commerce_quickpay_payment',
-        'title' => t('QuickPay Payment Gateway v10'),
+    $payment_methods['quickpay_payment_commerce'] = array(
+        'base' => 'quickpay_payment_commerce',
+        'title' => t('QuickPay Payment Gateway'),
         'short_title' => t('QuickPay'),
         'description' => t('QuickPay Payment Gateway'),
         'terminal' => FALSE,
@@ -27,16 +27,16 @@ function commerce_quickpay_payment_commerce_payment_method_info() {
 
 
 /**
- * commerce_quickpay_payment_menu 
+ * quickpay_payment_commerce_menu 
  *
  * Creates a callback endpoint used for processing QuickPay responses
  * 
  * @return array - the endpoint data
  */
-function commerce_quickpay_payment_menu() {
+function quickpay_payment_commerce_menu() {
     $items = array();
     $items['commerce-quickpay-payment/callback'] = array(
-        'page callback' => 'commerce_quickpay_payment_callback',
+        'page callback' => 'quickpay_payment_commerce_callback',
         'page arguments' => array(),
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
@@ -47,13 +47,13 @@ function commerce_quickpay_payment_menu() {
 
 
 /**
- * commerce_quickpay_payment_callback
+ * quickpay_payment_commerce_callback
  *
  * Handles callback requests
  * 
  * @return boolean
  */
-function commerce_quickpay_payment_callback() {
+function quickpay_payment_commerce_callback() {
     // Check for the QuickPay checksum
     if( ! isset( $_SERVER["HTTP_QUICKPAY_CHECKSUM_SHA256"] ) ) 
     {
@@ -107,9 +107,9 @@ function commerce_quickpay_payment_callback() {
       $transaction->status = COMMERCE_PAYMENT_STATUS_SUCCESS;
 
       switch( $operation->type ) {
-        case 'authorize' : commerce_quickpay_payment_order__authorize( $order, $transaction ); break;
-        case 'cancel' : commerce_quickpay_payment_order__cancel( $order ); break;
-        case 'capture' : commerce_quickpay_payment_order__capture( $order ); break;
+        case 'authorize' : quickpay_payment_commerce_order__authorize( $order, $transaction ); break;
+        case 'cancel' : quickpay_payment_commerce_order__cancel( $order ); break;
+        case 'capture' : quickpay_payment_commerce_order__capture( $order ); break;
         case 'refund' : break;
         case 'recurring': break;
       }
@@ -126,20 +126,20 @@ function commerce_quickpay_payment_callback() {
 
 
 /**
- * commerce_quickpay_payment_settings_form
+ * quickpay_payment_commerce_settings_form
  *
  * Returns the settings form shown in the admin section
  * 
  * @param  array $settings 
  * @return array
  */
-function commerce_quickpay_payment_settings_form($settings) {
+function quickpay_payment_commerce_settings_form($settings) {
     return QuickPay_Settings::settings_form($settings);
 }
 
 
 /**
- * commerce_quickpay_payment_redirect_form
+ * quickpay_payment_commerce_redirect_form
  *
  * Prepares the payment links and redirects the customer to the payment window
  * 
@@ -149,7 +149,7 @@ function commerce_quickpay_payment_settings_form($settings) {
  * @param  [type] $payment_method 
  * @return [type]                 
  */
-function commerce_quickpay_payment_redirect_form($form, &$form_state, $order, $payment_method) {
+function quickpay_payment_commerce_redirect_form($form, &$form_state, $order, $payment_method) {
 
     try 
     {
@@ -212,7 +212,7 @@ function commerce_quickpay_payment_redirect_form($form, &$form_state, $order, $p
 
 
 /**
- * commerce_quickpay_payment_views_post_render
+ * quickpay_payment_commerce_views_post_render
  *
  * Inserts the API action view after inside the transaction entry
  * 
@@ -221,11 +221,11 @@ function commerce_quickpay_payment_redirect_form($form, &$form_state, $order, $p
  * @param  [type] &$cache  [description]
  * @return [type]          [description]
  */
-function commerce_quickpay_payment_views_post_render(&$view, &$output, &$cache) {
+function quickpay_payment_commerce_views_post_render(&$view, &$output, &$cache) {
     if($view->name == 'commerce_payment_order') {
         // Get all transactions from this module
         $transactions = array_filter($view->result, function($t) {
-            return 'commerce_quickpay_payment' == $t->commerce_payment_transaction_payment_method;
+            return 'quickpay_payment_commerce' == $t->commerce_payment_transaction_payment_method;
         });
 
         if ( ! empty( $transactions ) ) {
@@ -259,7 +259,7 @@ function commerce_quickpay_payment_views_post_render(&$view, &$output, &$cache) 
  * @return string - JSON object
  * @throws Exception
  */
-function commerce_quickpay_payment_quickpay_payment_ajax_handler($action, $transaction_id, $order_id) {
+function quickpay_payment_commerce_quickpay_payment_ajax_handler($action, $transaction_id, $order_id) {
     // Load order object
     $order = commerce_order_load( $order_id );
 
@@ -287,7 +287,7 @@ function commerce_quickpay_payment_quickpay_payment_ajax_handler($action, $trans
             // Was the request successful?
             if( $request->is_success() ) {
                 // Update revision log
-                commerce_quickpay_payment_order__capture( $order );
+                quickpay_payment_commerce_order__capture( $order );
 
                 // Print JSON object
                 echo QuickPay_JSON::from_array( $request->as_array() );
@@ -304,7 +304,7 @@ function commerce_quickpay_payment_quickpay_payment_ajax_handler($action, $trans
             // Was the request successful?
             if( $request->is_success() ) {
                 // Update revision log
-                commerce_quickpay_payment_order__cancel( $order );
+                quickpay_payment_commerce_order__cancel( $order );
 
                 // Print JSON object
                 echo QuickPay_JSON::from_array( $request->as_array() );
@@ -333,7 +333,7 @@ function commerce_quickpay_payment_quickpay_payment_ajax_handler($action, $trans
 
             if( $request->is_success() ) {
                 // Update revision log
-                commerce_quickpay_payment_order__refund( $order, $request->as_object() );
+                quickpay_payment_commerce_order__refund( $order, $request->as_object() );
 
                 // Print JSON object
                 echo QuickPay_JSON::from_array( $request->as_array() );
@@ -349,39 +349,39 @@ function commerce_quickpay_payment_quickpay_payment_ajax_handler($action, $trans
 
 
 /**
- * commerce_quickpay_payment_order__capture 
+ * quickpay_payment_commerce_order__capture 
  *
  * Handles an order when a payment is captured
  * 
  * @param  object $order   
  */
-function commerce_quickpay_payment_order__capture($order) {
+function quickpay_payment_commerce_order__capture($order) {
     commerce_order_status_update($order, NULL, TRUE, FALSE, '');
     commerce_order_status_update($order, 'processing', FALSE, TRUE, QuickPay_Helper::revision('capture'));
 }
 
 
 /**
- * commerce_quickpay_payment_order__cancel
+ * quickpay_payment_commerce_order__cancel
  *
  * Handles an order when a payment is canceled
  * 
  * @param  object $order   
  */
-function commerce_quickpay_payment_order__cancel($order) {
+function quickpay_payment_commerce_order__cancel($order) {
     commerce_order_status_update($order, 'canceled', FALSE, TRUE, QuickPay_Helper::revision('canceled'));
 }
 
 
 /**
- * commerce_quickpay_payment_order__refund
+ * quickpay_payment_commerce_order__refund
  *
  * Handles an order when a payment is refunded
  * 
  * @param  object $order   
  */
-function commerce_quickpay_payment_order__refund($order, $api_transaction) {
-    $payment_method = 'commerce_quickpay_payment';
+function quickpay_payment_commerce_order__refund($order, $api_transaction) {
+    $payment_method = 'quickpay_payment_commerce';
 
     // Get last operation
     $operation = end($api_transaction->operations);
@@ -415,7 +415,7 @@ function commerce_quickpay_payment_order__refund($order, $api_transaction) {
 
 
 /**
- * commerce_quickpay_payment_form_commerce_checkout_form_alter
+ * quickpay_payment_commerce_form_commerce_checkout_form_alter
  *
  * Modifies the gateway name on checkout. In this method we are setting custom icons and card names used for payment methods.
  * 
@@ -423,15 +423,15 @@ function commerce_quickpay_payment_order__refund($order, $api_transaction) {
  * @param  [type] &$form_state [description]
  * @return [type]              [description]
  */
-function commerce_quickpay_payment_form_commerce_checkout_form_alter(&$form, &$form_state) {
+function quickpay_payment_commerce_form_commerce_checkout_form_alter(&$form, &$form_state) {
     // If this checkout form contains the payment method radios...
     if (!empty($form['commerce_payment']['payment_method']['#options'])) {
-        // Loop over its options array looking for a commerce_quickpay_payment option.
+        // Loop over its options array looking for a quickpay_payment_commerce option.
         foreach ($form['commerce_payment']['payment_method']['#options'] as $key => &$value) {
             list($method_id, $rule_name) = explode('|', $key);
 
             // If we find Quickpay...
-            if ($method_id == 'commerce_quickpay_payment') {
+            if ($method_id == 'quickpay_payment_commerce') {
                 // Reset name
                 $value = '';
 
@@ -467,14 +467,14 @@ function commerce_quickpay_payment_form_commerce_checkout_form_alter(&$form, &$f
 
 
 /**
- * commerce_quickpay_payment_order__authorize
+ * quickpay_payment_commerce_order__authorize
  *
  * Handles an order when a payment is authorized
  * 
  * @param  object $order
  * @param  object $transaction 
  */
-function commerce_quickpay_payment_order__authorize($order, $transaction) {
+function quickpay_payment_commerce_order__authorize($order, $transaction) {
     // Save the transaction
     commerce_payment_transaction_save($transaction);
 }
