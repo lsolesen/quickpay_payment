@@ -1,3 +1,10 @@
+/**
+ * Object to handle the QP Api Behaviour.
+ * 
+ * @param  {object} $ The jQuery Object
+ * 
+ * @returns {void}
+ */
 (function ($) {
   "use strict";
 
@@ -18,7 +25,8 @@
       }
 
       /**
-       * Method to start the magic
+       * Method to start the magic.
+       * 
        * @returns {void}
        */
       QuickPay.prototype.init = function () {
@@ -34,12 +42,12 @@
         });
       };
 
-
       /**
-       * Perform API requests
+       * Perform API requests.
        *
        * @param {string} action - the request action type
        * @param {function} callbackHandler - method to handle the response
+       * 
        * @returns {void}
        */
       QuickPay.prototype.request = function (action, callbackHandler) {
@@ -64,12 +72,12 @@
           });
       };
 
-
       /**
-       * Handle API responses
+       * Handle API responses.
        * 
        * @param {object} response - API response
        * @param {object} self - QuickPay
+       * 
        * @returns {void}
        */
       QuickPay.prototype.handleResponse = function (response, self) {
@@ -87,22 +95,22 @@
         self.updateButtons(lastOperationType);
       };
 
-
       /**
-       * Returns the type of the last operation
+       * Returns the type of the last operation.
        *
        * @param {object} operations The operations object
+       * 
        * @returns {string} The last operation
        */
       QuickPay.prototype.getLastOperation = function (operations) {
         return operations[operations.length - 1].type;
       };
 
-
       /**
-       * Updates the button view depending on the last operation type
+       * Updates the button view depending on the last operation type.
        *
        * @param {string} operationType Transaction operation type
+       * 
        * @returns {void}
        */
       QuickPay.prototype.updateButtons = function (operationType) {
