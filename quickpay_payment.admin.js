@@ -2,7 +2,7 @@
 	Drupal.behaviors.quickpayCardSelection = {
 		attach: function (context, settings) {
 			function QuickPay() {
-				this.container = $('#quickpay_payment');
+			  this.container = $('#quickpay_payment');
 				this.order_id = $('#quickpay_payment__order-id').text();
 				this.transaction_id = $('#quickpay_payment__transaction-id').text();
 				this.last_operation = $('#quickpay_payment__status');
