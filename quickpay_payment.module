@@ -21,7 +21,7 @@ module_load_include('php', 'quickpay_payment', 'includes/classes/json');
  *
  * Implements hook_init()
  */
-function quickpay_payment_init() {
+function quickpay_payment_page_build() {
     $path = drupal_get_path('module', 'quickpay_payment');
     if (user_access('administer modules') && path_is_admin(current_path())) {
         drupal_add_js($path . '/quickpay_payment.admin.js');
