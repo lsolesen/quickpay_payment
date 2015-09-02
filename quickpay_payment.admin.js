@@ -18,8 +18,8 @@
       }
 
       /**
-       * init
-       * @return void
+       * Method to start the magic
+       * @returns {void}
        */
       QuickPay.prototype.init = function () {
         var self = this;
@@ -28,7 +28,7 @@
         this.request('status', this.handleResponse);
 
         // Add event handlers to action buttons.
-        this.button_container.children('[data-quickpay-action]').click(function(e) {
+        this.button_container.children('[data-quickpay-action]').click(function (e) {
           e.preventDefault();
           self.request($(this).data('quickpay-action'), self.handleResponse);
         });
@@ -36,13 +36,11 @@
 
 
       /**
-       * request
-       *
        * Perform API requests
        *
-       * @param  string action - the request action type
-       * @param  function callbackHandler - method to handle the response
-       * @return
+       * @param {string} action - the request action type
+       * @param {function} callbackHandler - method to handle the response
+       * @returns {void}
        */
       QuickPay.prototype.request = function (action, callbackHandler) {
         var self = this;
@@ -51,30 +49,28 @@
         self.container.addClass('loading');
 
         // Perform request.
-        $.getJSON(Drupal.settings.basePath + 'quickpay-payment/ajax', { 
-          'action' : action,
-          'transaction_id' : this.transaction_id,
-          'order_id' : this.order_id,
-          'payment_module' : this.payment_module
+        $.getJSON(Drupal.settings.basePath + 'quickpay-payment/ajax', {
+          action: action,
+          transaction_id: this.transaction_id,
+          order_id: this.order_id,
+          payment_module: this.payment_module
           }, 
-        function(response) {
+          function(response) {
             // Process callback.
             callbackHandler(response, self);
 
             // Remove loader.
             self.container.removeClass('loading');
-        });
+          });
       };
 
 
       /**
-       * handleResponse
-       *
        * Handle API responses
        * 
-       * @param  object response - API response
-       * @param  object self   - QuickPay
-       * @return
+       * @param {object} response - API response
+       * @param {object} self - QuickPay
+       * @returns {void}
        */
       QuickPay.prototype.handleResponse = function (response, self) {
         var lastOperationType = self.getLastOperation(response.operations);
@@ -93,36 +89,32 @@
 
 
       /**
-       * getLastOperation
-       *
        * Returns the type of the last operation
        *
-       * @param  object operations
-       * @return string
+       * @param {object} operations The operations object
+       * @returns {string} The last operation
        */
       QuickPay.prototype.getLastOperation = function (operations) {
-        return operations[operations.length-1].type;
+        return operations[operations.length - 1].type;
       };
 
 
       /**
-       * updateButtons
-       *
        * Updates the button view depending on the last operation type
        *
-       * @param  string operationType
-       * @return
+       * @param {string} operationType Transaction operation type
+       * @returns {void}
        */
       QuickPay.prototype.updateButtons = function (operationType) {
         var self = this;
-        if ('authorize' == operationType) {
+        if (operationType === 'authorize') {
           this.button_container.fadeIn();
           self.button_capture.show();
           self.button_cancel.show();
-          self.button_refund.hide();			
+          self.button_refund.hide();
         }
 
-        if ('capture' == operationType) {
+        if (operationType === 'capture') {
           this.button_container.show();
           this.button_capture.hide();
           this.button_cancel.hide();
@@ -135,7 +127,7 @@
       };
 
       // Document ready.
-      $(function() {
+      $(function () {
         var QP = new QuickPay();
 
         // Init the object if the API container is present.
