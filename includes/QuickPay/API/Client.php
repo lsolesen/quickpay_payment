@@ -1,12 +1,7 @@
 <?php
 /**
  * @file
- *
  * Client class
- * @since       1.0.0
- * @package     QuickPay
- * @category    Class
- * @docs        http://tech.quickpay.net/api/
  */
 
 namespace QuickPay\API;
