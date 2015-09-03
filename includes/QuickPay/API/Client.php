@@ -7,19 +7,20 @@
 namespace QuickPay\API;
 
 /**
+ * Client class.
  * @since  1.0.0
  * @package  QuickPay
  * @category  Class
  */
 class Client {
   /**
-   * Contains cURL instance
+   * Contains cURL instance.
    * @access public
    */
   public $ch;
 
   /**
-   * Contains the authentication string
+   * Contains the authentication string.
    * @access protected
    */
   protected $auth_string;
@@ -27,16 +28,16 @@ class Client {
   /**
    * Instantiate object.
    */
-  public function __construct( $auth_string = '' ) {
+  public function __construct($auth_string = '') {
     // Check if lib cURL is enabled.
     if (!function_exists('curl_init')) {
-      throw new Exception( 'Lib cURL must be enabled on the server' );
+      throw new Exception('Lib cURL must be enabled on the server');
     }
 
-    // Set auth string property
+    // Set auth string property.
     $this->auth_string = $auth_string;
 
-    // Instantiate cURL object
+    // Instantiate cURL object.
     $this->authenticate();
   }
 
@@ -61,8 +62,8 @@ class Client {
     $this->ch = curl_init();
 
     $headers = array(
-    'Accept-Version: v10',
-    'Accept: application/json',
+      'Accept-Version: v10',
+      'Accept: application/json',
     );
 
     if (!empty($this->auth_string)) {
@@ -70,12 +71,13 @@ class Client {
     }
 
     $options = array(
-      CURLOPT_RETURNTRANSFER => true,
-      CURLOPT_SSL_VERIFYPEER => true,
+      CURLOPT_RETURNTRANSFER => TRUE,
+      CURLOPT_SSL_VERIFYPEER => TRUE,
       CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
       CURLOPT_HTTPHEADER => $headers,
     );
 
     curl_setopt_array($this->ch, $options);
   }
+
 }
