@@ -136,10 +136,10 @@ function quickpay_payment_commerce_callback() {
 /**
  * Returns the settings form shown in the admin section.
  *
- * @param string[] $settings
+ * @param object $settings
  *         Settings array.
  *
- * @return string[]
+ * @return array
  *         return the settings array.
  */
 function quickpay_payment_commerce_settings_form($settings) {
@@ -156,7 +156,7 @@ function quickpay_payment_commerce_settings_form($settings) {
  *         The form state.
  * @param object $order
  *         The order.
- * @param string[] $payment_method
+ * @param object $payment_method
  *         The payment method.
  *
  * @return string
@@ -262,13 +262,6 @@ function quickpay_payment_commerce_views_post_render(&$view, &$output, &$cache) 
 
 /**
  * Implements hook_quickpay_payment_ajax_handler().
- *
- * @param string $action
- *         The API action we want to call.
- * @param int $transaction_id
- *         The transaction ID.
- * @param int $order_id
- *         The order ID.
  *
  * @throws Exception
  *         Throws an error exception.
