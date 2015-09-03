@@ -31,9 +31,6 @@ function quickpay_payment_init() {
  * Implements hook_menu().
  *
  * Creates a callback endpoint used for processing QuickPay responses.
- *
- * @return array
- *         The endpoint data
  */
 function quickpay_payment_menu() {
   $items = array();
@@ -61,9 +58,6 @@ function quickpay_payment_ajax_secure() {
 
 /**
  * Checks AJAX request before manual API requests.
- *
- * @return string
- *         JSON object.
  *
  * @throws Exception
  *         Error message.
