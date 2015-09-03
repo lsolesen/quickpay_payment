@@ -136,10 +136,10 @@ function quickpay_payment_commerce_callback() {
 /**
  * Returns the settings form shown in the admin section.
  *
- * @param {array} $settings
+ * @param array $settings
  *         Settings array.
  *
- * @return {array}
+ * @return array
  *         return the settings array.
  */
 function quickpay_payment_commerce_settings_form($settings) {
@@ -156,7 +156,7 @@ function quickpay_payment_commerce_settings_form($settings) {
  *         The form state.
  * @param object $order
  *         The order.
- * @param {array} $payment_method
+ * @param array $payment_method
  *         The payment method.
  *
  * @return string
@@ -198,7 +198,7 @@ function quickpay_payment_commerce_redirect_form($form, &$form_state, $order, $p
         'continueurl' => url('checkout/' . $order->order_id . '/payment/return/' . $order->data['payment_redirect_key'], array('absolute' => TRUE)),
         'cancelurl' => url('checkout/' . $order->order_id . '/payment/back/' . $order->data['payment_redirect_key'], array('absolute' => TRUE)),
         'callbackurl' => url('commerce-quickpay-payment/callback', array('absolute' => TRUE)),
-     ));
+      ));
 
       if ($payment_link_response->is_success()) {
         $payment_link = $payment_link_response->as_object();
@@ -231,8 +231,6 @@ function quickpay_payment_commerce_redirect_form($form, &$form_state, $order, $p
  *         The output.
  * @param object &$cache
  *         The cache.
- *
- * @return void
  */
 function quickpay_payment_commerce_views_post_render(&$view, &$output, &$cache) {
   if ($view->name == 'commerce_payment_order') {
@@ -241,7 +239,7 @@ function quickpay_payment_commerce_views_post_render(&$view, &$output, &$cache) 
       return 'quickpay_payment_commerce' == $t->commerce_payment_transaction_payment_method;
     });
 
-    if (! empty($transactions)) {
+    if (!empty($transactions)) {
       // Get the very last transaction.
       $transaction = end($transactions);
 
@@ -263,7 +261,7 @@ function quickpay_payment_commerce_views_post_render(&$view, &$output, &$cache) 
 
 
 /**
- * Implement hook_quickpay_payment_ajax_handler.
+ * Implements hook_quickpay_payment_ajax_handler.
  *
  * @param string $action
  *         The API action we want to call.
@@ -272,8 +270,6 @@ function quickpay_payment_commerce_views_post_render(&$view, &$output, &$cache) 
  * @param int $order_id
  *         The order ID.
  *
- * @return string
- *         JSON Object.
  * @throws Exception
  */
 function quickpay_payment_commerce_quickpay_payment_ajax_handler($action, $transaction_id, $order_id) {
@@ -298,7 +294,7 @@ function quickpay_payment_commerce_quickpay_payment_ajax_handler($action, $trans
       // Make API request.
       $request = $api->request->post("/payments/{$transaction_id}/capture", array(
         'amount' => $order_wrapper->commerce_order_total->amount->value(),
-     ));
+      ));
 
       // Was the request successful?
       if ($request->is_success()) {
@@ -355,12 +351,8 @@ function quickpay_payment_commerce_quickpay_payment_ajax_handler($action, $trans
         exit;
       }
       break;
-
-    default:
-      throw new Exception(sprintf("Unknown payment action: %s", $action));
-      break;
-
   }
+  throw new Exception(sprintf("Unknown payment action: %s", $action));
 }
 
 
@@ -436,8 +428,6 @@ function quickpay_payment_commerce_order__refund($order, $api_transaction) {
  *         The form.
  * @param object &$form_state
  *         The form state.
- *
- * @return void
  */
 function quickpay_payment_commerce_form_commerce_checkout_form_alter(&$form, &$form_state) {
   // If this checkout form contains the payment method radios.
@@ -464,7 +454,7 @@ function quickpay_payment_commerce_form_commerce_checkout_form_alter(&$form, &$f
         $all_cards = quickpay_payment_cards();
 
         // Loop through all cards and see if they have been chosen.
-        foreach($payment_methods as $payment_method) {
+        foreach ($payment_methods as $payment_method) {
           if (array_key_exists($payment_method, $all_cards)) {
             $value .= sprintf('<img class="commerce-quickpay-method__icon" src="%s" title="%s" />', $all_cards[$payment_method]['image'], $all_cards[$payment_method]['name']);
           }
