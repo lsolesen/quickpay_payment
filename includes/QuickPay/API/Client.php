@@ -10,6 +10,7 @@ namespace QuickPay\API;
  * Client class.
  *
  * @since 1.0.0
+ *
  * @package QuickPay
  *
  * @category Class
@@ -17,12 +18,14 @@ namespace QuickPay\API;
 class Client {
   /**
    * Contains cURL instance.
+   *
    * @access public
    */
   public $ch;
 
   /**
    * Contains the authentication string.
+   *
    * @access protected
    */
   protected $authString;
@@ -48,8 +51,7 @@ class Client {
    *
    * @access public
    */
-  public function shutdown()
-  {
+  public function shutdown() {
     if (!empty($this->ch)) {
       curl_close($this->ch);
     }
