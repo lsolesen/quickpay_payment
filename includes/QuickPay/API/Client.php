@@ -1,11 +1,16 @@
 <?php
 /**
  * @file
- * Client class
+ * Client class.
  */
 
 namespace QuickPay\API;
 
+/**
+ * @since  1.0.0
+ * @package  QuickPay
+ * @category  Class
+ */
 class Client {
   /**
    * Contains cURL instance
@@ -19,32 +24,24 @@ class Client {
    */
   protected $auth_string;
 
-
- 	/**
-	* __construct function.
-	*
-	* Instantiate object.
-	*
-	* @access public
-	*/
+  /**
+   * Instantiate object.
+   */
   public function __construct( $auth_string = '' ) {
-      // Check if lib cURL is enabled.
-      if (!function_exists('curl_init'))
-      {
-          throw new Exception( 'Lib cURL must be enabled on the server' );
-      }
+    // Check if lib cURL is enabled.
+    if (!function_exists('curl_init')) {
+      throw new Exception( 'Lib cURL must be enabled on the server' );
+    }
 
-      // Set auth string property
-      $this->auth_string = $auth_string;
+    // Set auth string property
+    $this->auth_string = $auth_string;
 
-      // Instantiate cURL object
-      $this->authenticate();
+    // Instantiate cURL object
+    $this->authenticate();
   }
 
   /**
-   * shutdown function.
-   *
-   * Closes the current cURL connection
+   * Closes the current cURL connection.
    *
    * @access public
    */
@@ -55,32 +52,28 @@ class Client {
     }
   }
 
-
- 	/**
-	 * authenticate function.
-	 *
-	 * Create a cURL instance with authentication headers
-	 *
-	 * @access public
-	 */
-  protected function authenticate()
-  {
+  /**
+   * Create a cURL instance with authentication headers.
+   *
+   * @access public
+   */
+  protected function authenticate() {
     $this->ch = curl_init();
 
     $headers = array(
-        'Accept-Version: v10',
-        'Accept: application/json',
+    'Accept-Version: v10',
+    'Accept: application/json',
     );
 
-    if ( ! empty($this->auth_string)) {
-        $headers[] = 'Authorization: Basic ' . base64_encode($this->auth_string);
+    if (!empty($this->auth_string)) {
+      $headers[] = 'Authorization: Basic ' . base64_encode($this->auth_string);
     }
 
     $options = array(
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
-        CURLOPT_HTTPHEADER => $headers,
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_SSL_VERIFYPEER => true,
+      CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
+      CURLOPT_HTTPHEADER => $headers,
     );
 
     curl_setopt_array($this->ch, $options);
