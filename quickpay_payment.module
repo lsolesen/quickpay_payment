@@ -3,7 +3,6 @@
  * @file
  * Integrates quickpay.dk redirected payment service.
  *
- * Development sponsored by QuickPay.
  **/
 use QuickPay\QuickPay as QuickPay;
 

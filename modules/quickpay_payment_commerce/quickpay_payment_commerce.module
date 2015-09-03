@@ -3,14 +3,12 @@
  * @file
  * Integrates quickpay.dk redirected payment service - for Commerce package.
  *
- * Development sponsored by QuickPay.
- **/
+ */
 use QuickPay\QuickPay as QuickPay;
 
 /**
  * Implements hook_commerce_payment_method_info().
  *
- * @return array - the payment gateway data
  */
 function quickpay_payment_commerce_commerce_payment_method_info() {
   $payment_methods = array();
