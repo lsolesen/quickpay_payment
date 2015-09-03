@@ -22,7 +22,7 @@ function quickpay_payment_commerce_commerce_payment_method_info() {
     'active' => TRUE,
     'offsite' => TRUE,
     'offsite_autoredirect' => TRUE,
- );
+  );
 
   return $payment_methods;
 }
@@ -31,8 +31,8 @@ function quickpay_payment_commerce_commerce_payment_method_info() {
 /**
  * Creates a callback endpoint used for processing QuickPay responses.
  *
- *
- * @return array - the endpoint data
+ * @return array
+ *         the endpoint data
  */
 function quickpay_payment_commerce_menu() {
   $items = array();
@@ -41,7 +41,7 @@ function quickpay_payment_commerce_menu() {
     'page arguments' => array(),
     'access callback' => TRUE,
     'type' => MENU_CALLBACK,
- );
+  );
 
   return $items;
 }
