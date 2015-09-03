@@ -2,12 +2,11 @@
 /**
  * @file
  * Integrates quickpay.dk redirected payment service.
- *
  */
 
 use QuickPay\QuickPay as QuickPay;
 
-// Load module files
+// Load module files.
 module_load_include('php', 'quickpay_payment', 'includes/QuickPay/QuickPay');
 module_load_include('php', 'quickpay_payment', 'includes/classes/settings');
 module_load_include('php', 'quickpay_payment', 'includes/classes/helper');
@@ -21,22 +20,18 @@ function quickpay_payment_init() {
   if (user_access('administer modules') && path_is_admin(current_path())) {
     drupal_add_js($path . '/quickpay_payment.admin.js');
     drupal_add_css($path . '/quickpay_payment.admin.css');
-  } 
+  }
   else {
     drupal_add_js($path . '/quickpay_payment.js');
     drupal_add_css($path . '/quickpay_payment.css');
   }
 }
 
-function quickpay_payment_page_build(&$page) {
-	
-}
-
 /**
  * Implements hook_menu().
  *
  * Creates a callback endpoint used for processing QuickPay responses.
- * 
+ *
  * @return array
  *         The endpoint data
  */
@@ -54,7 +49,7 @@ function quickpay_payment_menu() {
 
 /**
  * Creates a callback endpoint used for processing QuickPay responses.
- * 
+ *
  * @return array
  *         The endpoint data
  */
@@ -69,7 +64,7 @@ function quickpay_payment_ajax_secure() {
  *
  * @return string
  *         JSON object.
- * 
+ *
  * @throws Exception
  *         Error message.
  */
@@ -92,7 +87,7 @@ function quickpay_payment_ajax() {
 
     module_invoke($post->payment_module, 'quickpay_payment_ajax_handler', $post->action, $post->transaction_id, $post->order_id);
   }
-  catch ( Exception $e ) {
+  catch (Exception $e) {
     echo QuickpayPayment_JSON::error($e->getMessage());
     exit;
   }
@@ -106,7 +101,7 @@ function quickpay_payment_ajax() {
  *         HTML output.
  */
 function quickpay_payment_api_view($order_id, $transaction_id, $payment_module) {
-  $html = '<div id="quickpay_payment" class="quickpay_payment" data-quickpay-gateway="'. $payment_module .'">';
+  $html = '<div id="quickpay_payment" class="quickpay_payment" data-quickpay-gateway="' . $payment_module . '">';
   $html .= sprintf('<h1>%s</h1>', t('QuickPay API'));
   $html .= sprintf('<div class="%s"><strong>%s:</strong> <span id="quickpay_payment__order-id">%s</span></div>', '', t('Order ID'), $order_id);
   $html .= sprintf('<div class="%s"><strong>%s:</strong> <span id="quickpay_payment__transaction-id">%s</span></div>', '', t('Transaction ID'), $transaction_id);
@@ -127,7 +122,7 @@ function quickpay_payment_api_view($order_id, $transaction_id, $payment_module) 
 
 /**
  * Returns information about each card type.
- * 
+ *
  * @return array
  *         Array of payment cards.
  */
@@ -163,7 +158,7 @@ function quickpay_payment_cards() {
       'image' => $images_path . 'maestro.png',
     ),
     'jcb' => array(
-     'name' => t('JCB'),
+      'name' => t('JCB'),
       'image' => $images_path . 'jcb.png',
     ),
     'diners' => array(
@@ -200,12 +195,12 @@ function quickpay_payment_cards() {
 
 /**
  * This method is used to filter selected payment options from the settings.
- * 
+ *
  * @return array
  *         Selected payment methods
  */
 function quickpay_payment_filter_payment_methods($payment_methods) {
-	return array_filter($payment_methods, function($method) {
-		return $method !== 0;
-	});
+  return array_filter($payment_methods, function($method) {
+    return $method !== 0;
+  });
 }
