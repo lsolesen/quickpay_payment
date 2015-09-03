@@ -1,17 +1,22 @@
 <?php
-namespace QuickPay\API;
 /**
- * @class 		QuickPay_Constants
- * @since		1.0.0
- * @package		QuickPay
- * @category	Class
- * @docs        http://tech.quickpay.net/api/
+ * @file
+ * Constants class.
  */
-class Constants     
-{
-    /**
-     * API DEFINITIONS
-     */
-    const API_URL = 'https://api.quickpay.net/';
-    const API_VERSION = '10';
+
+namespace QuickPay\API;
+
+/**
+ * QuickPay_Constants.
+ *
+ * @since 1.0.0
+ *
+ * @package QuickPay
+ *
+ * @category Class
+ */
+class Constants {
+  // API definitions.
+  const API_URL = 'https://api.quickpay.net/';
+  const API_VERSION = '10';
 }
