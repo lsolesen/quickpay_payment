@@ -136,10 +136,10 @@ function quickpay_payment_commerce_callback() {
 /**
  * Returns the settings form shown in the admin section.
  *
- * @param array $settings
+ * @param string[] $settings
  *         Settings array.
  *
- * @return array
+ * @return string[]
  *         return the settings array.
  */
 function quickpay_payment_commerce_settings_form($settings) {
@@ -156,7 +156,7 @@ function quickpay_payment_commerce_settings_form($settings) {
  *         The form state.
  * @param object $order
  *         The order.
- * @param array $payment_method
+ * @param string[] $payment_method
  *         The payment method.
  *
  * @return string
