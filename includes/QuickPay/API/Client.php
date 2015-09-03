@@ -8,9 +8,11 @@ namespace QuickPay\API;
 
 /**
  * Client class.
- * @since  1.0.0
- * @package  QuickPay
- * @category  Class
+ *
+ * @since 1.0.0
+ * @package QuickPay
+ *
+ * @category Class
  */
 class Client {
   /**
@@ -23,7 +25,7 @@ class Client {
    * Contains the authentication string.
    * @access protected
    */
-  protected $auth_string;
+  protected $authString;
 
   /**
    * Instantiate object.
@@ -35,7 +37,7 @@ class Client {
     }
 
     // Set auth string property.
-    $this->auth_string = $auth_string;
+    $this->authString = $auth_string;
 
     // Instantiate cURL object.
     $this->authenticate();
@@ -66,8 +68,8 @@ class Client {
       'Accept: application/json',
     );
 
-    if (!empty($this->auth_string)) {
-      $headers[] = 'Authorization: Basic ' . base64_encode($this->auth_string);
+    if (!empty($this->authString)) {
+      $headers[] = 'Authorization: Basic ' . base64_encode($this->authString);
     }
 
     $options = array(
