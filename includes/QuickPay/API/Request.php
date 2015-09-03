@@ -11,11 +11,11 @@ use QuickPay\API\Response;
 
 /**
  * QuickPay_Request.
- * 
+ *
  * @since 1.0.0
- * 
+ *
  * @package QuickPay
- * 
+ *
  * @category Class
  */
 class Request {
@@ -40,19 +40,20 @@ class Request {
    * Performs an API GET request.
    *
    * @access public
-   * @param  string $path
-   *         The path to request.
-   * @param  array  $query
-   *         The query params.
-   *         
+   *
+   * @param string $path
+   *        The path to request.
+   * @param array  $query
+   *        The query params.
+   *
    * @return resource Response
    *         The response resource.
-   */    
+   */
   public function get( $path, $query = array() )
   {
     // Add query parameters to $path?
     if ($query) {
-      if (strpos($path, '?') === false) {
+      if (strpos($path, '?') === FALSE) {
         $path .= '?' . http_build_query($query);
       }
       else {
@@ -72,7 +73,7 @@ class Request {
    * Performs an API POST request.
    *
    * @access public
-   * 
+   *
    * @return Response
    *         The response.
    */
@@ -105,7 +106,7 @@ class Request {
    * Performs an API PATCH request.
    *
    * @access public
-   * 
+   *
    * @return Response
    */
   public function patch($path, $form = array()) {
@@ -121,7 +122,7 @@ class Request {
    * Performs an API DELETE request.
    *
    * @access public
-   * 
+   *
    * @return Response
    *         The response.
    */
@@ -148,26 +149,28 @@ class Request {
    * Performs the prepared API request.
    *
    * @access protected
-   * @param  string $request_type
+   *
+   * @param string $request_type
    *         The request type.
-   * @param  array  $form
+   * @param array $form
    *         The form.
-   *         
+   *
    * @return Response
+   *         The response.
    */
   protected function execute($request_type, $form = array()) {
     // Set the HTTP request type.
     curl_setopt($this->client->ch, CURLOPT_CUSTOMREQUEST, $request_type);
 
     // Send additional data along with the API request (if provided).
-    if(is_array($form) && !empty($form)) {
+    if (is_array($form) && !empty($form)) {
       curl_setopt($this->client->ch, CURLOPT_POSTFIELDS, http_build_query($form));
     }
 
     // Store received headers in temporary memory file, remember sent headers.
     $fh_header = fopen('php://memory', 'w+');
     curl_setopt($this->client->ch, CURLOPT_WRITEHEADER, $fh_header);
-    curl_setopt($this->client->ch, CURLINFO_HEADER_OUT, true);
+    curl_setopt($this->client->ch, CURLINFO_HEADER_OUT, TRUE);
 
     // Execute the request.
     $response_data = curl_exec($this->client->ch);

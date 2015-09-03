@@ -19,4 +19,5 @@ class Constants {
   // API definitions.
   const API_URL = 'https://api.quickpay.net/';
   const API_VERSION = '10';
+
 }
