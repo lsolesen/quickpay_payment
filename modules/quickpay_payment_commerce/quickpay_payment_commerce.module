@@ -261,7 +261,7 @@ function quickpay_payment_commerce_views_post_render(&$view, &$output, &$cache) 
 
 
 /**
- * Implements hook_quickpay_payment_ajax_handler.
+ * Implements hook_quickpay_payment_ajax_handler().
  *
  * @param string $action
  *         The API action we want to call.
@@ -271,6 +271,7 @@ function quickpay_payment_commerce_views_post_render(&$view, &$output, &$cache) 
  *         The order ID.
  *
  * @throws Exception
+ *         Throws an error exception.
  */
 function quickpay_payment_commerce_quickpay_payment_ajax_handler($action, $transaction_id, $order_id) {
   // Load order object.
@@ -421,8 +422,7 @@ function quickpay_payment_commerce_order__refund($order, $api_transaction) {
 
 
 /**
- * Modifies the gateway name on checkout. In this method we are setting
- * custom icons and card names used for payment methods.
+ * Modifies the gateway name on checkout. Set custom icons and gateway name.
  *
  * @param object &$form
  *         The form.
@@ -432,7 +432,7 @@ function quickpay_payment_commerce_order__refund($order, $api_transaction) {
 function quickpay_payment_commerce_form_commerce_checkout_form_alter(&$form, &$form_state) {
   // If this checkout form contains the payment method radios.
   if (!empty($form['commerce_payment']['payment_method']['#options'])) {
-    // Loop over its options array looking for a quickpay_payment_commerce option.
+    // Find quickpay_payment_commerce option.
     foreach ($form['commerce_payment']['payment_method']['#options'] as $key => &$value) {
       list($method_id) = explode('|', $key);
 
