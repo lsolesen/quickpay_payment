@@ -176,7 +176,7 @@ function quickpay_payment_commerce_redirect_form($form, &$form_state, $order, $p
     // Create payment.
     $payment_response = $api->request->post('/payments', array(
       'currency' => $order_wrapper->commerce_order_total->currency_code->value(),
-      'order_id' => QuickpayPayment_Helper::order_number_standardize($order->order_number)
+      'order_id' => QuickpayPayment_Helper::order_number_standardize($order->order_number),
     ));
 
     // If the payment was created, lets go create a payment link.
@@ -197,7 +197,7 @@ function quickpay_payment_commerce_redirect_form($form, &$form_state, $order, $p
         'language' => $settings['language'],
         'continueurl' => url('checkout/' . $order->order_id . '/payment/return/' . $order->data['payment_redirect_key'], array('absolute' => TRUE)),
         'cancelurl' => url('checkout/' . $order->order_id . '/payment/back/' . $order->data['payment_redirect_key'], array('absolute' => TRUE)),
-        'callbackurl' => url('commerce-quickpay-payment/callback', array('absolute' => TRUE))
+        'callbackurl' => url('commerce-quickpay-payment/callback', array('absolute' => TRUE)),
      ));
 
       if ($payment_link_response->is_success()) {
@@ -297,7 +297,7 @@ function quickpay_payment_commerce_quickpay_payment_ajax_handler($action, $trans
     case 'capture':
       // Make API request.
       $request = $api->request->post("/payments/{$transaction_id}/capture", array(
-        'amount' => $order_wrapper->commerce_order_total->amount->value()
+        'amount' => $order_wrapper->commerce_order_total->amount->value(),
      ));
 
       // Was the request successful?
@@ -343,8 +343,8 @@ function quickpay_payment_commerce_quickpay_payment_ajax_handler($action, $trans
     /* REFUND */
     case 'refund':
       $request = $api->request->post("/payments/{$transaction_id}/refund", array(
-        'amount' => $order_wrapper->commerce_order_total->amount->value()
-     ));
+        'amount' => $order_wrapper->commerce_order_total->amount->value(),
+      ));
 
       if ($request->is_success()) {
         // Update revision log.
@@ -379,8 +379,8 @@ function quickpay_payment_commerce_order__capture($order) {
 /**
  * Handles an order when a payment is canceled.
  *
- * @param  {Object} $order
- *         The order object.
+ * @param {Object} $order
+ *        The order object.
  */
 function quickpay_payment_commerce_order__cancel($order) {
   commerce_order_status_update($order, 'canceled', FALSE, TRUE, QuickpayPayment_Helper::revision('canceled'));
@@ -390,8 +390,8 @@ function quickpay_payment_commerce_order__cancel($order) {
 /**
  * Handles an order when a payment is refunded.
  *
- * @param  {Object} $order
- *         The order object.
+ * @param {Object} $order
+ *        The order object.
  */
 function quickpay_payment_commerce_order__refund($order, $api_transaction) {
   $payment_method = 'quickpay_payment_commerce';
@@ -485,9 +485,9 @@ function quickpay_payment_commerce_form_commerce_checkout_form_alter(&$form, &$f
 /**
  * Handles an order when a payment is authorized.
  *
- * @param  {Object} $order
+ * @param  object $order
  *         The order object
- * @param  {Object} $transaction
+ * @param  object $transaction
  *         The transaction object
  */
 function quickpay_payment_commerce_order__authorize($order, $transaction) {
