@@ -1,14 +1,11 @@
 <?php
-use QuickPay\QuickPay as QuickPay;
 /**
  * @file
  * Integrates quickpay.dk redirected payment service.
  *
  * Development sponsored by QuickPay.
- *
- * @todo hook_requirements should be implemented, so we can tell the
- * @todo user whether we're using bcmul/bcdiv.
- */
+ **/
+use QuickPay\QuickPay as QuickPay;
 
 // Load module files
 module_load_include('php', 'quickpay_payment', 'includes/QuickPay/QuickPay');
