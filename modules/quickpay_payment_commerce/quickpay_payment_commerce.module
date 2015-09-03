@@ -104,7 +104,7 @@ function quickpay_payment_commerce_callback() {
     // It might be changed later in the progress.
     $transaction->status = COMMERCE_PAYMENT_STATUS_SUCCESS;
 
-    switch($operation->type) {
+    switch ($operation->type) {
       case 'authorize':
         quickpay_payment_commerce_order__authorize($order, $transaction);
         break;
@@ -135,7 +135,8 @@ function quickpay_payment_commerce_callback() {
 /**
  * Returns the settings form shown in the admin section.
  *
- * @param  {array} $settings - settings array.
+ * @param  {array} $settings
+ *         Settings array.
  * @return {array}
  *         return the settings array.
  */
@@ -147,10 +148,14 @@ function quickpay_payment_commerce_settings_form($settings) {
 /**
  * Prepares the payment links and redirects the customer to the payment window.
  *
- * @param  {object} $form - the form
- * @param  {object} &$form_state - the form state
- * @param  {object} $order - the order.
- * @param  {array} $payment_method - the payment method.
+ * @param  {object} $form
+ *         The form.
+ * @param  {object} &$form_state
+ *         The form state
+ * @param  {object} $order
+ *         The order.
+ * @param  {array} $payment_method
+ *         The payment method.
  * @return {string}
  *         Might return an error message
  */
@@ -214,9 +219,12 @@ function quickpay_payment_commerce_redirect_form($form, &$form_state, $order, $p
 /**
  * Inserts the API action view after inside the transaction entry.
  *
- * @param  {object} &$view - the view
- * @param  {object} &$output - the output
- * @param  {object} &$cache  - the cache
+ * @param  {object} &$view
+ *         The view
+ * @param  {object} &$output
+ *         The output
+ * @param  {object} &$cache
+ *         The cache
  * @return {void}
  */
 function quickpay_payment_commerce_views_post_render(&$view, &$output, &$cache) {
@@ -250,10 +258,14 @@ function quickpay_payment_commerce_views_post_render(&$view, &$output, &$cache) 
 /**
  * Implement hook_quickpay_payment_ajax_handler.
  *
- * @param  {string} $action - the API action we want to call
- * @param  {int} $transaction_id - the transaction ID
- * @param  {int} $order_id - the order ID
- * @return {string} - JSON object
+ * @param  {string} $action
+ *         The API action we want to call
+ * @param  {int} $transaction_id
+ *         The transaction ID
+ * @param  {int} $order_id
+ *         The order ID
+ * @return {string}
+ *         JSON Object
  * @throws Exception
  */
 function quickpay_payment_commerce_quickpay_payment_ajax_handler($action, $transaction_id, $order_id) {
@@ -272,8 +284,7 @@ function quickpay_payment_commerce_quickpay_payment_ajax_handler($action, $trans
   // Instantiate order wrapper.
   $order_wrapper = entity_metadata_wrapper('commerce_order', $order);
 
-  switch($action)
-  {
+  switch ($action) {
     /* CAPTURE */
     case 'capture':
       // Make API request.
@@ -348,7 +359,8 @@ function quickpay_payment_commerce_quickpay_payment_ajax_handler($action, $trans
 /**
  * Handles an order when a payment is captured.
  *
- * @param  {object} $order - the order object
+ * @param  {object} $order
+ *         The order object
  */
 function quickpay_payment_commerce_order__capture($order) {
   commerce_order_status_update($order, NULL, TRUE, FALSE, '');
@@ -359,7 +371,8 @@ function quickpay_payment_commerce_order__capture($order) {
 /**
  * Handles an order when a payment is canceled.
  *
- * @param  {object} $order - the order object.
+ * @param  {object} $order
+ *         The order object.
  */
 function quickpay_payment_commerce_order__cancel($order) {
   commerce_order_status_update($order, 'canceled', FALSE, TRUE, QuickpayPayment_Helper::revision('canceled'));
@@ -369,7 +382,8 @@ function quickpay_payment_commerce_order__cancel($order) {
 /**
  * Handles an order when a payment is refunded.
  *
- * @param  {object} $order - the order object.
+ * @param  {object} $order
+ *         The order object.
  */
 function quickpay_payment_commerce_order__refund($order, $api_transaction) {
   $payment_method = 'quickpay_payment_commerce';
@@ -408,8 +422,10 @@ function quickpay_payment_commerce_order__refund($order, $api_transaction) {
 /**
  * Modifies the gateway name on checkout. In this method we are setting custom icons and card names used for payment methods.
  *
- * @param  {object} &$form The form
- * @param  {object} &$form_state The form state
+ * @param  {object} &$form
+ *         The form
+ * @param  {object} &$form_state
+ *         The form state
  * @return {void}
  */
 function quickpay_payment_commerce_form_commerce_checkout_form_alter(&$form, &$form_state) {
@@ -459,8 +475,10 @@ function quickpay_payment_commerce_form_commerce_checkout_form_alter(&$form, &$f
 /**
  * Handles an order when a payment is authorized.
  *
- * @param  {object} $order - the order object
- * @param  {object} $transaction - the transaction object
+ * @param  {object} $order
+ *         The order object
+ * @param  {object} $transaction
+ *         The transaction object
  */
 function quickpay_payment_commerce_order__authorize($order, $transaction) {
     // Save the transaction.
