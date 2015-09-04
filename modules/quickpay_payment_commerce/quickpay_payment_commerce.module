@@ -28,6 +28,8 @@ function quickpay_payment_commerce_commerce_payment_method_info() {
 
 
 /**
+ * Implements hook_menu().
+ *
  * Creates a callback endpoint used for processing QuickPay responses.
  *
  * @return array
@@ -74,7 +76,7 @@ function quickpay_payment_commerce_callback() {
   $settings = $payment_method['settings'];
 
   // Hashed response.
-  $hash = hash_hmac('sha256', $response_body, $settings['agreement_privatekey']);
+  $hash = hash_hmac('sha256', $response_body, $settings['agreementPrivateKey']);
 
   // Callback checksum control.
   if ($hash != $_SERVER["HTTP_QUICKPAY_CHECKSUM_SHA256"]) {
@@ -182,7 +184,7 @@ function quickpay_payment_commerce_redirect_form($form, &$form_state, $order, $p
     // If the payment was created, lets go create a payment link.
     if ($payment_response->isSuccess()) {
       // Create payment methods string.
-      $payment_methods_array = quickpay_payment_filter_payment_methods($settings['payment_methods']);
+      $payment_methods_array = quickpay_payment_filter_payment_methods($settings['paymentMethods']);
       $payment_methods = implode(',', $payment_methods_array);
 
       // Get the payment data.
@@ -439,7 +441,7 @@ function quickpay_payment_commerce_form_commerce_checkout_form_alter(&$form, &$f
         $settings = $form['commerce_payment']['payment_methods']['#value'][$key]["settings"];
 
         // Get selected cards.
-        $payment_methods = array_filter($settings['payment_methods'], function($card) {
+        $payment_methods = array_filter($settings['paymentMethods'], function($card) {
           return $card !== 0;
         });
 
@@ -454,7 +456,7 @@ function quickpay_payment_commerce_form_commerce_checkout_form_alter(&$form, &$f
         }
 
         // Add original payment name.
-        $value .= $settings['gateway_name'];
+        $value .= $settings['gatewayName'];
 
         // Add CSS.
         $form['commerce_payment']['payment_method']['#attached']['css'][] = drupal_get_path('module', 'quickpay_payment') . '/quickpay_payment.css';

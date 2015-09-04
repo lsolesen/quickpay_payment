@@ -18,12 +18,11 @@ module_load_include('php', 'quickpay_payment', 'includes/classes/json');
 function quickpay_payment_init() {
   $path = drupal_get_path('module', 'quickpay_payment');
   if (user_access('administer modules') && path_is_admin(current_path())) {
-    drupal_add_js($path . '/quickpay_payment.admin.js');
-    drupal_add_css($path . '/quickpay_payment.admin.css');
+    //drupal_add_js($path . '/quickpay_payment.admin.js');
+    //drupal_add_css($path . '/quickpay_payment.admin.css');
   }
   else {
-    drupal_add_js($path . '/quickpay_payment.js');
-    drupal_add_css($path . '/quickpay_payment.css');
+    //drupal_add_css($path . '/quickpay_payment.css');
   }
 }
 
@@ -42,6 +41,35 @@ function quickpay_payment_menu() {
   );
 
   return $items;
+}
+
+/**
+ * Implements hook_page_build().
+ */
+function quickpay_payment_page_build(&$page) {
+  $path = drupal_get_path('module', 'quickpay_payment');
+
+  // Admin section.
+  if (user_access('administer modules') && path_is_admin(current_path())) {
+    // Add admin JS.
+    $page['content']['system_main']['main']['#attached']['js'][] = array(
+      'type' => 'file',
+      'data' => $path . '/quickpay_payment.admin.js',
+    );
+    // Add admin CSS.
+    $page['content']['system_main']['main']['#attached']['css'][] = array(
+      'type' => 'file',
+      'data' => $path . '/quickpay_payment.admin.css',
+    );
+  }
+  // Frontend.
+  else {
+    // Add frontend CSS.
+    $page['content']['system_main']['main']['#attached']['css'][] = array(
+      'type' => 'file',
+      'data' => $path . '/quickpay_payment.css',
+    );
+  }
 }
 
 /**

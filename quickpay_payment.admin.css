@@ -36,24 +36,24 @@
   max-height: 20px;
 }
 
-#edit-parameter-payment-method-settings-payment-method-settings-payment-methods {
+#edit-parameter-payment-method-settings-payment-method-settings-paymentmethods {
   max-width: 800px;
 }
 
-#edit-parameter-payment-method-settings-payment-method-settings-payment-methods::after {
+#edit-parameter-payment-method-settings-payment-method-settings-paymentmethods::after {
   display: table;
   content: "";
   clear: both;
 }
 
 
-#edit-parameter-payment-method-settings-payment-method-settings-payment-methods input[type="checkbox"] {
+#edit-parameter-payment-method-settings-payment-method-settings-paymentmethods input[type="checkbox"] {
   display: inline-block;
   margin-right: 5px;
 }
 
 @media (min-width: 768px) {
-  #edit-parameter-payment-method-settings-payment-method-settings-payment-methods > div {
+  #edit-parameter-payment-method-settings-payment-method-settings-paymentmethods > div {
     float: left;
     width: 50%;
     box-sizing: border-box;
