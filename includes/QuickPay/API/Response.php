@@ -8,57 +8,57 @@ namespace QuickPay\API;
 
 /**
  * QuickPay_Response.
- * 
+ *
  * @since 1.0.0
- * 
+ *
  * @package QuickPay
- * 
+ *
  * @category Class
  */
 class Response {
   /**
    * HTTP status code of request.
    */
-  protected $statusCode;
+  protected $status_code;
 
   /**
    * The headers sent during the request.
    */
-  protected $sentHeaders;
+  protected $sent_headers;
 
   /**
    * The headers received during the request.
    */
-  protected $receivedHeaders;
+  protected $received_headers;
 
   /**
    * Response body of last request.
    */
-  protected $responseData;
+  protected $response_data;
 
   /**
    * Instantiates a new response object.
    *
-   * @param int $statusCode
+   * @param int $status_code
    *        The HTTP status code.
-   * @param string $sentHeaders
+   * @param string $sent_headers
    *        The headers sent.
-   * @param string $receivedHeaders
+   * @param string $received_headers
    *        The headers received.
-   * @param string $responseData
+   * @param string $response_data
    *        The http response body.
    */
-  public function __construct($statusCode, $sentHeaders, $receivedHeaders, $responseData) {
-    $this->statusCode = $statusCode;
-    $this->sentHeaders = $sentHeaders;
-    $this->receivedHeaders = $receivedHeaders;
-    $this->responseData = $responseData;
+  public function __construct($status_code, $sent_headers, $received_headers, $response_data) {
+    $this->status_code = $status_code;
+    $this->sent_headers = $sent_headers;
+    $this->received_headers = $received_headers;
+    $this->response_data = $response_data;
   }
 
   /**
    * Returns the HTTP status code, headers and response body.
    *
-   * Usage: list($statusCode, $headers, $response_body) = $response->asRaw().
+   * Usage: list($status_code, $headers, $response_body) = $response->asRaw().
    *
    * @param bool $keep_authorization_value
    *        Normally the value of the Authorization: header is masked.
@@ -70,20 +70,20 @@ class Response {
     // To avoid unintentional logging of credentials the default
     //is to mask the value of the Authorization: header.
     if ($keep_authorization_value) {
-      $sentHeaders = $this->sentHeaders;
+      $sent_headers = $this->sent_headers;
     }
     else {
       // Avoid dependency on mbstring.
-      $lines = explode("\n", $this->sentHeaders);
+      $lines = explode("\n", $this->sent_headers);
       foreach ($lines as &$line) {
         if (strpos($line, 'Authorization: ') === 0) {
           $line = 'Authorization: <hidden by default>';
         }
       }
-      $sentHeaders = implode("\n", $lines);
+      $sent_headers = implode("\n", $lines);
     }
 
-    return [$this->statusCode, [	'sent' => $sentHeaders, 'received' => $this->receivedHeaders], $this->responseData];
+    return [$this->status_code, [	'sent' => $sent_headers, 'received' => $this->received_headers], $this->response_data];
   }
 
   /**
@@ -93,7 +93,7 @@ class Response {
    *         The result.
    */
   public function asArray() {
-    if ($response = json_decode($this->responseData, TRUE)) {
+    if ($response = json_decode($this->response_data, TRUE)) {
       return $response;
     }
 
@@ -107,7 +107,7 @@ class Response {
    *         The result.
    */
   public function asObject() {
-    if($response = json_decode($this->responseData)) {
+    if($response = json_decode($this->response_data)) {
       return $response;
     }
 
@@ -121,7 +121,7 @@ class Response {
    *         The status code.
    */
   public function httpStatus() {
-    return $this->statusCode;
+    return $this->status_code;
   }
 
   /**
@@ -131,7 +131,7 @@ class Response {
    *         Was the request successful?
    */
   public function isSuccess() {
-    if($this->statusCode > 299) {
+    if($this->status_code > 299) {
       return FALSE;
     }
 
