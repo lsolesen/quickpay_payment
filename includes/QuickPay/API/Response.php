@@ -63,7 +63,7 @@ class Response {
    * @param bool $keep_authorization_value
    *        Normally the value of the Authorization: header is masked.
    *        True keeps the sent value.
-   *        
+   *
    * @return array
    *         Ex: [integer, string[], string].
    */

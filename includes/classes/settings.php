@@ -30,8 +30,9 @@ class QuickpayPaymentSettings {
 
   /**
    * Construct.
-   * @param array $settings 
-   *        The settings array
+   *
+   * @param array $settings
+   *        The settings array.
    */
   public function __construct($settings = array()) {
     $this->options = array();
@@ -117,7 +118,7 @@ class QuickpayPaymentSettings {
    * @return array
    *         The settings array
    */
-  public static function settings_form($settings = array()) {
+  public static function settingsForm($settings = array()) {
     $settings += array(
       'gatewayName' => t('Credit card'),
       'merchant' => '',

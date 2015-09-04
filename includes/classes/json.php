@@ -18,7 +18,7 @@ class QuickpayPaymentJSON {
   /**
    * Returns an error response object.
    *
-   * @param  string $message
+   * @param string $message
    *         The error message.
    *
    * @return object

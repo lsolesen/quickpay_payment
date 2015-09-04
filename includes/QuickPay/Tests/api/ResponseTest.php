@@ -24,9 +24,9 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
   /**
    * Tests the response Http codes.
    *
-   * @param string $httpCode
+   * @param string $http_code
    *        The Http code we want to test.
-   * @param string $expectedResult
+   * @param string $expected_result
    *        What we expect the result to be.
    *
    * @dataProvider providerTestSuccessResponseHttpCodes
@@ -39,6 +39,11 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals($result, $expected_result);
   }
 
+  /**
+   * providerTestSuccessResponseHttpCodes.
+   * @return array
+   *         Array of data.
+   */
   public function providerTestSuccessResponseHttpCodes() {
     return array(
       array(200, TRUE),
@@ -69,6 +74,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
 
   /**
    * ProviderTestReturnOfHttpStatusCodes.
+   *
    * @return array
    *         Array of status codes.
    */
