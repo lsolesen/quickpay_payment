@@ -31,12 +31,12 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
    *
    * @dataProvider providerTestSuccessResponseHttpCodes
    */
-  public function testSuccessResponseHttpCodes($httpCode, $expectedResult) {
-    $response = new Response($httpCode, '', '', '');
+  public function testSuccessResponseHttpCodes($http_code, $expected_result) {
+    $response = new Response($http_code, '', '', '');
 
     $result = $response->isSuccess();
 
-    $this->assertEquals($result, $expectedResult);
+    $this->assertEquals($result, $expected_result);
   }
 
   public function providerTestSuccessResponseHttpCodes() {
@@ -52,19 +52,19 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
   /**
    * Tests the return of Http status codes.
    *
-   * @param string $httpCode 
+   * @param string $httpCode
    *        The Http code we want to test.
-   * @param string $expectedCode 
+   * @param string $expectedCode
    *        What we expect the result to be.
    *
    * @dataProvider providerTestReturnOfHttpStatusCodes
    */
-  public function testReturnOfHttpStatusCodes($httpCode, $expectedCode) {
-    $response = new Response($httpCode, '', '', '');
+  public function testReturnOfHttpStatusCodes($http_code, $expected_result) {
+    $response = new Response($http_code, '', '', '');
 
-    $statusCode = $response->httpStatus();
+    $status_code = $response->httpStatus();
 
-    $this->assertEquals($statusCode, $expectedCode);
+    $this->assertEquals($status_code, $expected_result);
   }
 
   /**
@@ -86,9 +86,9 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
   public function testReturnOfResponseDataAsArray() {
     $response = new Response(200, '', '', $this->responseTestData);
 
-    $responseArray = $response->asArray();
+    $response_array = $response->asArray();
 
-    $this->assertTrue(is_array($responseArray));
+    $this->assertTrue(is_array($response_array));
   }
 
   /**
@@ -97,9 +97,9 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
   public function testReturnOfEmptyResponseDataAsArray() {
     $response = new Response(200, '', '', '');
 
-    $responseArray = $response->asArray();
+    $response_array = $response->asArray();
 
-    $this->assertTrue(is_array($responseArray));
+    $this->assertTrue(is_array($response_array));
   }
 
   /**
@@ -108,9 +108,9 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
   public function testReturnOfResponseDataAsObject() {
     $response = new Response(200, '', '', $this->responseTestData);
 
-    $responseObject = $response->asObject();
+    $response_object = $response->asObject();
 
-    $this->assertTrue(is_object($responseObject));
+    $this->assertTrue(is_object($response_object));
   }
 
   /**
@@ -119,9 +119,9 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
   public function testReturnOfEmptyResponseDataAsObject() {
     $response = new Response(200, '', '', '');
 
-    $responseObject = $response->asObject();
+    $response_object = $response->asObject();
 
-    $this->assertTrue(is_object($responseObject));
+    $this->assertTrue(is_object($response_object));
   }
 
   /**
@@ -130,11 +130,11 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
   public function testReturnOfResponseDataAsRaw() {
     $response = new Response(200, '', '', $this->responseTestData);
 
-    list($statusCode, $headers, $responseRaw) = $response->asRaw();
+    list($status_code, $headers, $response_raw) = $response->asRaw();
 
-    $this->assertTrue(is_int($statusCode));
+    $this->assertTrue(is_int($status_code));
     $this->assertTrue(is_array($headers));
-    $this->assertTrue(is_string($responseRaw));
+    $this->assertTrue(is_string($response_raw));
   }
 
 }

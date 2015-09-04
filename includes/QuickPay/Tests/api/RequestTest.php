@@ -37,9 +37,9 @@ class RequestTest extends \PHPUnit_Framework_TestCase {
    * TestResponseInstance.
    */
   public function testResponseInstance() {
-    $pingResponse = $this->request->get('/ping');
+    $ping_response = $this->request->get('/ping');
 
-    $this->assertTrue( ($pingResponse instanceof Response) );
+    $this->assertTrue(($ping_response instanceof Response));
   }
 
   /**
@@ -58,36 +58,36 @@ class RequestTest extends \PHPUnit_Framework_TestCase {
    * TestSuccessfulGetResponse.
    */
   public function testSuccessfulGetResponse() {
-    $pingResponse = $this->request->get('/ping');
+    $ping_response = $this->request->get('/ping');
 
-    $this->assertTrue($pingResponse->isSuccess());
+    $this->assertTrue($ping_response->isSuccess());
   }
 
   /**
    * TestFailedGetResponse.
    */
   public function testFailedGetResponse() {
-    $pingResponse = $this->request->get('/foobar');
+    $ping_response = $this->request->get('/foobar');
 
-    $this->assertFalse($pingResponse->isSuccess());
+    $this->assertFalse($ping_response->isSuccess());
   }
 
   /**
    * TestSuccesfulPostResponse.
    */
   public function testSuccesfulPostResponse() {
-    $pingResponse = $this->request->post('/ping');
+    $ping_response = $this->request->post('/ping');
 
-    $this->assertTrue($pingResponse->isSuccess());
+    $this->assertTrue($ping_response->isSuccess());
   }
 
   /**
    * TestFailedPostResponse.
    */
   public function testFailedPostResponse() {
-    $pingResponse = $this->request->post('/foobar');
+    $ping_response = $this->request->post('/foobar');
 
-    $this->assertFalse($pingResponse->isSuccess());
+    $this->assertFalse($ping_response->isSuccess());
   }
 
 }

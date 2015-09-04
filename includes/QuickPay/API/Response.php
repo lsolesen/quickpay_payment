@@ -8,11 +8,11 @@ namespace QuickPay\API;
 
 /**
  * QuickPay_Response.
- * 
+ *
  * @since 1.0.0
- * 
+ *
  * @package QuickPay
- * 
+ *
  * @category Class
  */
 class Response {
@@ -39,13 +39,13 @@ class Response {
   /**
    * Instantiates a new response object.
    *
-   * @param int $statusCode
+   * @param int $status_code
    *        The HTTP status code.
-   * @param string $sentHeaders
+   * @param string $sent_headers
    *        The headers sent.
-   * @param string $receivedHeaders
+   * @param string $received_headers
    *        The headers received.
-   * @param string $responseData
+   * @param string $response_data
    *        The http response body.
    */
   public function __construct($status_code, $sent_headers, $received_headers, $response_data) {
@@ -63,14 +63,15 @@ class Response {
    * @param bool $keep_authorization_value
    *        Normally the value of the Authorization: header is masked.
    *        True keeps the sent value.
+   *        
    * @return array
    *         Ex: [integer, string[], string].
    */
   public function asRaw($keep_authorization_value = FALSE) {
     // To avoid unintentional logging of credentials the default
-    //is to mask the value of the Authorization: header.
+    // is to mask the value of the Authorization: header.
     if ($keep_authorization_value) {
-      $sentHeaders = $this->sentHeaders;
+      $sent_headers = $this->sentHeaders;
     }
     else {
       // Avoid dependency on mbstring.
@@ -80,10 +81,10 @@ class Response {
           $line = 'Authorization: <hidden by default>';
         }
       }
-      $sentHeaders = implode("\n", $lines);
+      $sent_headers = implode("\n", $lines);
     }
 
-    return [$this->statusCode, ['sent' => $sentHeaders, 'received' => $this->receivedHeaders], $this->responseData];
+    return [$this->statusCode, ['sent' => $sent_headers, 'received' => $this->receivedHeaders], $this->responseData];
   }
 
   /**

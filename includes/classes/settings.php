@@ -21,13 +21,18 @@ class QuickpayPaymentSettings {
   protected $agreementId;
   protected $agreementApiKey;
   protected $agreementPrivateKey;
-  protected $api_apikey;
+  protected $apiApiKey;
   protected $paymentMethods;
   protected $language;
   protected $autocapture;
   protected $autofee;
   protected $brandingId;
 
+  /**
+   * Construct.
+   * @param array $settings 
+   *        The settings array
+   */
   public function __construct($settings = array()) {
     $this->options = array();
 
@@ -36,7 +41,7 @@ class QuickpayPaymentSettings {
     $this->set('agreementId');
     $this->set('agreementApiKey');
     $this->set('agreementPrivateKey');
-    $this->set('api_apikey');
+    $this->set('apiApiKey');
     $this->set('paymentMethods');
     $this->set('language');
     $this->set('autocapture');
@@ -79,15 +84,15 @@ class QuickpayPaymentSettings {
   }
 
   /**
-   * returns the language code as a string.
+   * Returns the language code as a string.
    *
-   * @param  string $langcode
-   *         Language code in Drupal format.
+   * @param string $langcode
+   *        Language code in Drupal format.
    *
    * @return string
    *         The language code.
    */
-  protected static function get_country_code($langcode) {
+  protected static function getCountryCode($langcode) {
     $langcodes = array(
       'da' => 'da',
       'de' => 'de',
@@ -119,7 +124,7 @@ class QuickpayPaymentSettings {
       'agreementId' => '',
       'agreementApiKey' => '',
       'agreementPrivateKey' => '',
-      'api_apikey' => '',
+      'apiApiKey' => '',
       'paymentMethods' => array(),
       'language' => LANGUAGE_NONE,
       'autocapture' => FALSE,
@@ -171,11 +176,11 @@ class QuickpayPaymentSettings {
     );
 
     // API setup.
-    $form['api_apikey'] = array(
+    $form['apiApiKey'] = array(
       '#type' => 'textfield',
       '#title' => t('API User - API key'),
       '#description' => t('Your API User\'s key. Create a separate API user in the "Users" tab inside the QuickPay manager.'),
-      '#default_value' => $settings['api_apikey'],
+      '#default_value' => $settings['apiApiKey'],
       '#required' => TRUE,
     );
 
@@ -231,13 +236,13 @@ class QuickpayPaymentSettings {
    */
   public static function paymentMethodOptions() {
     // Available methods.
-    $paymentMethods = quickpay_payment_cards();
+    $payment_methods = quickpay_payment_cards();
 
     // Prepare options array.
     $options = array();
 
     // Populate options array with payment methods.
-    foreach ($paymentMethods as $key => $value) {
+    foreach ($payment_methods as $key => $value) {
       $options[$key] = sprintf('<img class="quickpay-card-icon" src="%s" title="%s" /> %2$s', $value['image'], $value['name']);
     }
 

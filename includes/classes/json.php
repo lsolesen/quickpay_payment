@@ -37,7 +37,7 @@ class QuickpayPaymentJSON {
    * @return object
    *         JSON object.
    */
-  public static function from_array($array) {
+  public static function fromArray($array) {
     return json_encode($array);
   }
 

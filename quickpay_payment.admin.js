@@ -85,7 +85,7 @@
         self.last_operation.text(lastOperationType);
 
         // Visualize transaction test mode.
-        if (response.test_mode === TRUE) {
+        if (response.test_mode === true) {
           self.test.fadeIn();
         }
 

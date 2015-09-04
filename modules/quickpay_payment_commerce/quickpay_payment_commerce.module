@@ -168,7 +168,7 @@ function quickpay_payment_commerce_redirect_form($form, &$form_state, $order, $p
     $settings = $payment_method['settings'];
 
     // Create an API client instance.
-    $api = new QuickPay(":{$settings['api_apikey']}");
+    $api = new QuickPay(":{$settings['apiApiKey']}");
 
     // Get order wrapper.
     $order_wrapper = entity_metadata_wrapper('commerce_order', $order);
@@ -274,7 +274,7 @@ function quickpay_payment_commerce_quickpay_payment_ajax_handler($action, $trans
   $payment_method = commerce_payment_method_instance_load($order->data['payment_method']);
 
   // Get API key from settings.
-  $api_key = $payment_method['settings']['api_apikey'];
+  $api_key = $payment_method['settings']['apiApiKey'];
 
   // Instantiate an API connection.
   $api = new QuickPay(":{$api_key}");
@@ -296,7 +296,7 @@ function quickpay_payment_commerce_quickpay_payment_ajax_handler($action, $trans
         quickpay_payment_commerce_order__capture($order);
 
         // Print JSON object.
-        echo QuickpayPaymentJSON::from_array($request->asArray());
+        echo QuickpayPaymentJSON::fromArray($request->asArray());
         exit;
       }
       break;
@@ -312,7 +312,7 @@ function quickpay_payment_commerce_quickpay_payment_ajax_handler($action, $trans
         quickpay_payment_commerce_order__cancel($order);
 
         // Print JSON object.
-        echo QuickpayPaymentJSON::from_array($request->asArray());
+        echo QuickpayPaymentJSON::fromArray($request->asArray());
         exit;
       }
       break;
@@ -325,7 +325,7 @@ function quickpay_payment_commerce_quickpay_payment_ajax_handler($action, $trans
       // Was the request successful?
       if ($request->isSuccess()) {
         // Print JSON object.
-        echo QuickpayPaymentJSON::from_array($request->asArray());
+        echo QuickpayPaymentJSON::fromArray($request->asArray());
         exit;
       }
       break;
@@ -341,7 +341,7 @@ function quickpay_payment_commerce_quickpay_payment_ajax_handler($action, $trans
         quickpay_payment_commerce_order__refund($order, $request->asObject());
 
         // Print JSON object.
-        echo QuickpayPaymentJSON::from_array($request->asArray());
+        echo QuickpayPaymentJSON::fromArray($request->asArray());
         exit;
       }
       break;
