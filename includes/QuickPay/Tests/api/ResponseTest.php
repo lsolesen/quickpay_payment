@@ -40,7 +40,8 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * providerTestSuccessResponseHttpCodes.
+   * ProviderTestSuccessResponseHttpCodes.
+   * 
    * @return array
    *         Array of data.
    */
@@ -57,9 +58,9 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
   /**
    * Tests the return of Http status codes.
    *
-   * @param string $httpCode
+   * @param string $http_code
    *        The Http code we want to test.
-   * @param string $expectedCode
+   * @param string $expected_result
    *        What we expect the result to be.
    *
    * @dataProvider providerTestReturnOfHttpStatusCodes
