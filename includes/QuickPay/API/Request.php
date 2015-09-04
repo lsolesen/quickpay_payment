@@ -22,6 +22,7 @@ class Request {
 
   /**
    * Contains QuickPay_Client instance.
+   * 
    * @access protected
    */
   protected $client;
@@ -39,8 +40,6 @@ class Request {
   /**
    * Performs an API GET request.
    *
-   * @access public
-   *
    * @param string $path
    *        The path to request.
    * @param array  $query
@@ -49,8 +48,7 @@ class Request {
    * @return resource Response
    *         The response resource.
    */
-  public function get( $path, $query = array() )
-  {
+  public function get($path, $query = array()) {
     // Add query parameters to $path?
     if ($query) {
       if (strpos($path, '?') === FALSE) {
@@ -62,7 +60,7 @@ class Request {
     }
 
     // Set the request params.
-    $this->set_url( $path );
+    $this->setUrl($path);
 
     // Start the request and return the response.
     return $this->execute('GET');
@@ -79,7 +77,7 @@ class Request {
    */
   public function post($path, $form = array()) {
     // Set the request params.
-    $this->set_url($path);
+    $this->setUrl($path);
 
     // Start the request and return the response.
     return $this->execute('POST', $form);
@@ -90,12 +88,13 @@ class Request {
    * Performs an API PUT request.
    *
    * @access public
+   * 
    * @return Response
    *         The response.
    */
   public function put($path, $form = array()) {
     // Set the request params.
-    $this->set_url( $path );
+    $this->setUrl($path);
 
     // Start the request and return the response.
     return $this->execute('PUT', $form);
@@ -108,10 +107,11 @@ class Request {
    * @access public
    *
    * @return Response
+   *         The response.
    */
   public function patch($path, $form = array()) {
     // Set the request params.
-    $this->set_url($path);
+    $this->setUrl($path);
 
     // Start the request and return the response.
     return $this->execute('PATCH', $form);
@@ -128,7 +128,7 @@ class Request {
    */
   public function delete($path, $form = array()) {
     // Set the request params.
-    $this->set_url( $path );
+    $this->setUrl($path);
 
     // Start the request and return the response.
     return $this->execute('DELETE', $form);
@@ -140,15 +140,13 @@ class Request {
    *
    * @access protected
    */
-  protected function set_url($params) {
+  protected function setUrl($params) {
     curl_setopt($this->client->ch, CURLOPT_URL, Constants::API_URL . trim($params, '/'));
   }
 
 
   /**
    * Performs the prepared API request.
-   *
-   * @access protected
    *
    * @param string $request_type
    *         The request type.

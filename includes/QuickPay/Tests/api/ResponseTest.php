@@ -1,109 +1,118 @@
 <?php
+/**
+ * @file
+ * ResponseTest.
+ */
 
 namespace QuickPay\Tests;
 
 use QuickPay\API\Response;
 
-class ResponseTest extends \PHPUnit_Framework_TestCase
-{
+/**
+ * ResponseTest.
+ *
+ * @since 1.0.0
+ *
+ * @package QuickPay
+ *
+ * @category Test
+ */
+class ResponseTest extends \PHPUnit_Framework_TestCase {
 
-    private $responseTestData = '{ "key1": "value1", "key2": "value2" }';
+  private $responseTestData = '{ "key1": "value1", "key2": "value2" }';
 
-    /**
-     * @param string $httpCode The HTTP code we want to test
-     * @param string $expectedResult What we expect the result to be
-     *
-     * @dataProvider providerTestSuccessResponseHTTPCodes
-     */
-	public function testSuccessResponseHTTPCodes($httpCode, $expectedResult)
-    {
-        $response = new Response($httpCode, '', '', '');
-        
-        $result = $response->is_success();
-        
-        $this->assertEquals($result, $expectedResult);
-    }
+  /**
+   * Tests the response HTTP codes.
+   *
+   * @param string $httpCode
+   *        The HTTP code we want to test.
+   * @param string $expectedResult
+   *        What we expect the result to be.
+   *
+   * @dataProvider providerTestSuccessResponseHTTPCodes
+   */
+  public function testSuccessResponseHTTPCodes($httpCode, $expectedResult) {
+    $response = new Response($httpCode, '', '', '');
 
-    public function providerTestSuccessResponseHTTPCodes()
-    {
-    	return array(
-    		array(200, true),
-    		array(255, true),
-            array(299, true),
-            array(300, false),
-    		array(400, false)
-    	);
-    }
+    $result = $response->is_success();
 
-    /**
-     * @param string $httpCode The HTTP code we want to test
-     * @param string $expectedCode What we expect the result to be
-     *
-     * @dataProvider providerTestReturnOfHTTPStatusCodes
-     */
-    public function testReturnOfHTTPStatusCodes($httpCode, $expectedCode)
-    {
-        $response = new Response($httpCode, '', '', '');
-        
-        $statusCode = $response->http_status();
-        
-        $this->assertEquals($statusCode, $expectedCode);
-    }
+    $this->assertEquals($result, $expectedResult);
+  }
 
-    public function providerTestReturnOfHTTPStatusCodes()
-    {
-        return array(
-            array(200, 200),
-            array(300, 300),
-            array(500, 500)
-        );
-    }
+  public function providerTestSuccessResponseHTTPCodes() {
+    return array(
+      array(200, true),
+      array(255, true),
+      array(299, true),
+      array(300, false),
+      array(400, false),
+    );
+  }
 
-    public function testReturnOfResponseDataAsArray()
-    {
-        $response = new Response(200, '', '', $this->responseTestData);
+  /**
+   * Tests the return of HTTP status codes.
+   *
+   * @param string $httpCode The HTTP code we want to test
+   * @param string $expectedCode What we expect the result to be
+   *
+   * @dataProvider providerTestReturnOfHTTPStatusCodes
+   */
+  public function testReturnOfHTTPStatusCodes($httpCode, $expectedCode) {
+    $response = new Response($httpCode, '', '', '');
 
-        $responseArray = $response->as_array();
+    $statusCode = $response->http_status();
 
-        $this->assertTrue( is_array($responseArray) );
-    }
+    $this->assertEquals($statusCode, $expectedCode);
+  }
 
-    public function testReturnOfEmptyResponseDataAsArray()
-    {
-        $response = new Response(200, '', '', '');
+  public function providerTestReturnOfHTTPStatusCodes() {
+    return array(
+      array(200, 200),
+      array(300, 300),
+      array(500, 500),
+    );
+  }
 
-        $responseArray = $response->as_array();
+  public function testReturnOfResponseDataAsArray() {
+    $response = new Response(200, '', '', $this->responseTestData);
 
-        $this->assertTrue( is_array($responseArray) );
-    }
+    $responseArray = $response->asArray();
 
-    public function testReturnOfResponseDataAsObject()
-    {
-        $response = new Response(200, '', '', $this->responseTestData);
+    $this->assertTrue(is_array($responseArray));
+  }
 
-        $responseObject = $response->as_object();
+  public function testReturnOfEmptyResponseDataAsArray() {
+    $response = new Response(200, '', '', '');
 
-        $this->assertTrue( is_object($responseObject) );
-    }
+    $responseArray = $response->asArray();
 
-    public function testReturnOfEmptyResponseDataAsObject()
-    {
-        $response = new Response(200, '', '', '');
+    $this->assertTrue(is_array($responseArray));
+  }
 
-        $responseObject = $response->as_object();
+  public function testReturnOfResponseDataAsObject() {
+    $response = new Response(200, '', '', $this->responseTestData);
 
-        $this->assertTrue( is_object($responseObject) );
-    }
+    $responseObject = $response->asObject();
 
-    public function testReturnOfResponseDataAsRaw()
-    {
-        $response = new Response(200, '', '', $this->responseTestData);
+    $this->assertTrue(is_object($responseObject));
+  }
 
-		list($statusCode, $headers, $responseRaw) = $response->as_raw();
+  public function testReturnOfEmptyResponseDataAsObject() {
+    $response = new Response(200, '', '', '');
 
-        $this->assertTrue( is_int($statusCode) );
-        $this->assertTrue( is_array($headers) );
-        $this->assertTrue( is_string($responseRaw) );
-    }
+    $responseObject = $response->asObject();
+
+    $this->assertTrue(is_object($responseObject));
+  }
+
+  public function testReturnOfResponseDataAsRaw() {
+    $response = new Response(200, '', '', $this->responseTestData);
+
+    list($statusCode, $headers, $responseRaw) = $response->asRaw();
+
+    $this->assertTrue(is_int($statusCode));
+    $this->assertTrue(is_array($headers));
+    $this->assertTrue(is_string($responseRaw));
+  }
 
 }

@@ -186,7 +186,7 @@ function quickpay_payment_commerce_redirect_form($form, &$form_state, $order, $p
       $payment_methods = implode(',', $payment_methods_array);
 
       // Get the payment data.
-      $payment = $payment_response->as_object();
+      $payment = $payment_response->asObject();
       $payment_link_response = $api->request->put("/payments/{$payment->id}/link", array(
         'amount' => $order_wrapper->commerce_order_total->amount->value(),
         'autocapture' => $settings['autocapture'],
@@ -201,16 +201,16 @@ function quickpay_payment_commerce_redirect_form($form, &$form_state, $order, $p
       ));
 
       if ($payment_link_response->is_success()) {
-        $payment_link = $payment_link_response->as_object();
+        $payment_link = $payment_link_response->asObject();
         header(sprintf('location: %s', $payment_link->url));
       }
       else {
-        echo 'Payment link error: '; print_r($payment_link_response->as_raw());
+        echo 'Payment link error: '; print_r($payment_link_response->asRaw());
         exit;
       }
     }
     else {
-      echo 'Payment error: '; print_r($payment_response->as_raw());
+      echo 'Payment error: '; print_r($payment_response->asRaw());
       exit;
     }
   }
@@ -296,7 +296,7 @@ function quickpay_payment_commerce_quickpay_payment_ajax_handler($action, $trans
         quickpay_payment_commerce_order__capture($order);
 
         // Print JSON object.
-        echo QuickpayPayment_JSON::from_array($request->as_array());
+        echo QuickpayPayment_JSON::from_array($request->asArray());
         exit;
       }
       break;
@@ -312,7 +312,7 @@ function quickpay_payment_commerce_quickpay_payment_ajax_handler($action, $trans
         quickpay_payment_commerce_order__cancel($order);
 
         // Print JSON object.
-        echo QuickpayPayment_JSON::from_array($request->as_array());
+        echo QuickpayPayment_JSON::from_array($request->asArray());
         exit;
       }
       break;
@@ -325,7 +325,7 @@ function quickpay_payment_commerce_quickpay_payment_ajax_handler($action, $trans
       // Was the request successful?
       if ($request->is_success()) {
         // Print JSON object.
-        echo QuickpayPayment_JSON::from_array($request->as_array());
+        echo QuickpayPayment_JSON::from_array($request->asArray());
         exit;
       }
       break;
@@ -338,10 +338,10 @@ function quickpay_payment_commerce_quickpay_payment_ajax_handler($action, $trans
 
       if ($request->is_success()) {
         // Update revision log.
-        quickpay_payment_commerce_order__refund($order, $request->as_object());
+        quickpay_payment_commerce_order__refund($order, $request->asObject());
 
         // Print JSON object.
-        echo QuickpayPayment_JSON::from_array($request->as_array());
+        echo QuickpayPayment_JSON::from_array($request->asArray());
         exit;
       }
       break;
