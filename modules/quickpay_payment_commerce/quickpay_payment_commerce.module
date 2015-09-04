@@ -28,8 +28,6 @@ function quickpay_payment_commerce_commerce_payment_method_info() {
 
 
 /**
- * Implements hook_menu().
- *
  * Creates a callback endpoint used for processing QuickPay responses.
  *
  * @return array

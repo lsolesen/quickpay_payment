@@ -13,20 +13,6 @@ module_load_include('php', 'quickpay_payment', 'includes/classes/helper');
 module_load_include('php', 'quickpay_payment', 'includes/classes/json');
 
 /**
- * Implements hook_init().
- */
-function quickpay_payment_init() {
-  $path = drupal_get_path('module', 'quickpay_payment');
-  if (user_access('administer modules') && path_is_admin(current_path())) {
-    //drupal_add_js($path . '/quickpay_payment.admin.js');
-    //drupal_add_css($path . '/quickpay_payment.admin.css');
-  }
-  else {
-    //drupal_add_css($path . '/quickpay_payment.css');
-  }
-}
-
-/**
  * Implements hook_menu().
  *
  * Creates a callback endpoint used for processing QuickPay responses.
