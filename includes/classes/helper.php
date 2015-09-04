@@ -1,11 +1,11 @@
 <?php
 /**
  * @file
- * QuickpayPayment_Helper class.
+ * QuickpayPaymentHelper class.
  */
 
 /**
- * QuickpayPayment_Helper.
+ * QuickpayPaymentHelper.
  *
  * @since 1.0.0
  *
@@ -13,25 +13,25 @@
  *
  * @category Class
  */
-class QuickpayPayment_Helper {
+class QuickpayPaymentHelper {
   /**
    * Returns an order number which is at least 4 digits.
    *
    * @return string
    *         The order number.
    */
-  public static function order_number_standardize($order_number) {
-    return str_pad($order_number , 4, 0, STR_PAD_LEFT);
+  public static function orderNumberStandardize($order_number) {
+    return str_pad($order_number, 4, 0, STR_PAD_LEFT);
   }
 
 
   /**
    * Returns the price with no decimals. 10.10 returns as 1010.
    *
-   * @return integer
+   * @return int
    *         The multiplied price.
    */
-  public static function price_multiply($price) {
+  public static function priceMultiply($price) {
     return number_format($price * 100, 0, '', '');
   }
 
@@ -42,7 +42,7 @@ class QuickpayPayment_Helper {
    * @return float
    *         The normalized price.
    */
-  public static function price_normalize($price) {
+  public static function priceNormalize($price) {
     return number_format($price / 100, 2, '.', '');
   }
 
@@ -57,7 +57,7 @@ class QuickpayPayment_Helper {
    *         A revision string.
    */
   public static function revision($status) {
-  $log_message = 'QuickPay: ';
+    $log_message = 'QuickPay: ';
 
     switch ($status) {
       case 'cancel':

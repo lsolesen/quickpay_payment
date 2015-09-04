@@ -82,7 +82,7 @@ function quickpay_payment_ajax() {
     module_invoke($post->payment_module, 'quickpay_payment_ajax_handler', $post->action, $post->transaction_id, $post->order_id);
   }
   catch (Exception $e) {
-    echo QuickpayPayment_JSON::error($e->getMessage());
+    echo QuickpayPaymentJSON::error($e->getMessage());
     exit;
   }
 }

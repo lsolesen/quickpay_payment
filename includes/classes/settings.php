@@ -1,11 +1,11 @@
 <?php
 /**
  * @file
- * QuickpayPayment_Settings class.
+ * QuickpayPaymentSettings class.
  */
 
 /**
- * QuickpayPayment_Settings.
+ * QuickpayPaymentSettings.
  *
  * @since 1.0.0
  *
@@ -13,35 +13,35 @@
  *
  * @category Class
  */
-class QuickpayPayment_Settings {
+class QuickpayPaymentSettings {
 
   protected $options;
-  protected $gateway_name;
+  protected $gatewayName;
   protected $merchant;
-  protected $agreement_id;
-  protected $agreement_apikey;
-  protected $agreement_privatekey;
+  protected $agreementId;
+  protected $agreementApiKey;
+  protected $agreementPrivateKey;
   protected $api_apikey;
-  protected $payment_methods;
+  protected $paymentMethods;
   protected $language;
   protected $autocapture;
   protected $autofee;
-  protected $branding_id;
+  protected $brandingId;
 
   public function __construct($settings = array()) {
     $this->options = array();
 
-    $this->set('gateway_name');
+    $this->set('gatewayName');
     $this->set('merchant');
-    $this->set('agreement_id');
-    $this->set('agreement_apikey');
-    $this->set('agreement_privatekey');
+    $this->set('agreementId');
+    $this->set('agreementApiKey');
+    $this->set('agreementPrivateKey');
     $this->set('api_apikey');
-    $this->set('payment_methods');
+    $this->set('paymentMethods');
     $this->set('language');
     $this->set('autocapture');
     $this->set('autofee');
-    $this->set('branding_id');
+    $this->set('brandingId');
   }
 
   /**
@@ -62,7 +62,7 @@ class QuickpayPayment_Settings {
    * @return array
    *         An array of languages.
    */
-  protected static function get_languages() {
+  protected static function getLanguages() {
     return array(
       'da' => t('Danish'),
       'de' => t('German'),
@@ -114,29 +114,29 @@ class QuickpayPayment_Settings {
    */
   public static function settings_form($settings = array()) {
     $settings += array(
-      'gateway_name' => t('Credit card'),
+      'gatewayName' => t('Credit card'),
       'merchant' => '',
-      'agreement_id' => '',
-      'agreement_apikey' => '',
-      'agreement_privatekey' => '',
+      'agreementId' => '',
+      'agreementApiKey' => '',
+      'agreementPrivateKey' => '',
       'api_apikey' => '',
-      'payment_methods' => array(),
+      'paymentMethods' => array(),
       'language' => LANGUAGE_NONE,
       'autocapture' => FALSE,
       'autofee' => FALSE,
-      'branding_id' => '',
+      'brandingId' => '',
     );
 
-    /** Gateway name. **/
-    $form['gateway_name'] = array(
+    // Gateway name.
+    $form['gatewayName'] = array(
       '#type' => 'textfield',
       '#title' => t('Gateway Name'),
       '#description' => t('The name of the gateway that is presented to the customers on checkout.'),
-      '#default_value' => $settings['gateway_name'],
+      '#default_value' => $settings['gatewayName'],
       '#required' => TRUE,
     );
 
-    /** Merchant.  **/
+    // Merchant.
     $form['merchant'] = array(
       '#type' => 'textfield',
       '#title' => t('Merchant ID'),
@@ -145,32 +145,32 @@ class QuickpayPayment_Settings {
       '#required' => TRUE,
     );
 
-    /** Payment Window. **/
-    $form['agreement_id'] = array(
+    // Payment Window.
+    $form['agreementId'] = array(
       '#type' => 'textfield',
       '#title' => t('Payment Window - Agreement ID'),
       '#description' => t('Your Payment Window agreement id. Found in the "Integration" tab inside the QuickPay manager.'),
-      '#default_value' => $settings['agreement_id'],
+      '#default_value' => $settings['agreementId'],
       '#required' => TRUE,
     );
 
-    $form['agreement_apikey'] = array(
+    $form['agreementApiKey'] = array(
       '#type' => 'textfield',
       '#title' => t('Payment Window - API key'),
       '#description' => t('Your Payment Window agreement API key. Found in the "Integration" tab inside the QuickPay manager.'),
-      '#default_value' => $settings['agreement_apikey'],
+      '#default_value' => $settings['agreementApiKey'],
       '#required' => TRUE,
     );
 
-    $form['agreement_privatekey'] = array(
+    $form['agreementPrivateKey'] = array(
       '#type' => 'textfield',
       '#title' => t('Payment Window - Private key'),
       '#description' => t('Your Payment Window agreement private key. Found in the "Integration" tab inside the QuickPay manager.'),
-      '#default_value' => $settings['agreement_privatekey'],
+      '#default_value' => $settings['agreementPrivateKey'],
       '#required' => TRUE,
     );
 
-    /**  API setup.  **/
+    // API setup.
     $form['api_apikey'] = array(
       '#type' => 'textfield',
       '#title' => t('API User - API key'),
@@ -179,24 +179,23 @@ class QuickpayPayment_Settings {
       '#required' => TRUE,
     );
 
-
-    /** Extra Settings. **/
-    $form['branding_id'] = array(
+    // Extra Settings.
+    $form['brandingId'] = array(
       '#type' => 'textfield',
       '#title' => t('Branding ID'),
       '#description' => t('Leave empty if you have no custom branding options'),
-      '#default_value' => $settings['branding_id'],
+      '#default_value' => $settings['brandingId'],
     );
 
-    $form['payment_methods'] = array(
+    $form['paymentMethods'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Payment Methods'),
-      '#options' => self::payment_method_options(),
+      '#options' => self::paymentMethodOptions(),
       '#description' => t('Recommended: creditcard. Type in the cards you wish to accept (comma separated). See the valid payment types here: <b>http://tech.quickpay.net/appendixes/payment-methods/</b>'),
-      '#default_value' => $settings['payment_methods'],
+      '#default_value' => $settings['paymentMethods'],
     );
 
-    $languages = self::get_languages() + array(LANGUAGE_NONE => t('Language of the user'));
+    $languages = self::getLanguages() + array(LANGUAGE_NONE => t('Language of the user'));
 
     $form['language'] = array(
       '#type' => 'select',
@@ -230,15 +229,15 @@ class QuickpayPayment_Settings {
    * @return array
    *         The select options.
    */
-  public static function payment_method_options() {
+  public static function paymentMethodOptions() {
     // Available methods.
-    $payment_methods = quickpay_payment_cards();
+    $paymentMethods = quickpay_payment_cards();
 
     // Prepare options array.
     $options = array();
 
     // Populate options array with payment methods.
-    foreach ($payment_methods as $key => $value) {
+    foreach ($paymentMethods as $key => $value) {
       $options[$key] = sprintf('<img class="quickpay-card-icon" src="%s" title="%s" /> %2$s', $value['image'], $value['name']);
     }
 

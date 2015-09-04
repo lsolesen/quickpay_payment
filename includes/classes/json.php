@@ -1,11 +1,11 @@
 <?php
 /**
  * @file
- * QuickpayPayment_JSON class.
+ * QuickpayPaymentJSON class.
  */
 
 /**
- * QuickpayPayment_JSON.
+ * QuickpayPaymentJSON.
  *
  * @since 1.0.0
  *
@@ -13,7 +13,7 @@
  *
  * @category Class
  */
-class QuickpayPayment_JSON {
+class QuickpayPaymentJSON {
 
   /**
    * Returns an error response object.
@@ -32,7 +32,7 @@ class QuickpayPayment_JSON {
   }
 
   /**
-   * from_array.
+   * From_array.
    *
    * @return object
    *         JSON object.
@@ -40,4 +40,5 @@ class QuickpayPayment_JSON {
   public static function from_array($array) {
     return json_encode($array);
   }
+
 }

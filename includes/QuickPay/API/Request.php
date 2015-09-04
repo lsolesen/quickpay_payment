@@ -22,7 +22,7 @@ class Request {
 
   /**
    * Contains QuickPay_Client instance.
-   * 
+   *
    * @access protected
    */
   protected $client;
@@ -42,7 +42,7 @@ class Request {
    *
    * @param string $path
    *        The path to request.
-   * @param array  $query
+   * @param array $query
    *        The query params.
    *
    * @return resource Response
@@ -88,7 +88,7 @@ class Request {
    * Performs an API PUT request.
    *
    * @access public
-   * 
+   *
    * @return Response
    *         The response.
    */

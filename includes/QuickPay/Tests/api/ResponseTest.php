@@ -22,50 +22,57 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
   private $responseTestData = '{ "key1": "value1", "key2": "value2" }';
 
   /**
-   * Tests the response HTTP codes.
+   * Tests the response Http codes.
    *
    * @param string $httpCode
-   *        The HTTP code we want to test.
+   *        The Http code we want to test.
    * @param string $expectedResult
    *        What we expect the result to be.
    *
-   * @dataProvider providerTestSuccessResponseHTTPCodes
+   * @dataProvider providerTestSuccessResponseHttpCodes
    */
-  public function testSuccessResponseHTTPCodes($httpCode, $expectedResult) {
+  public function testSuccessResponseHttpCodes($httpCode, $expectedResult) {
     $response = new Response($httpCode, '', '', '');
 
-    $result = $response->is_success();
+    $result = $response->isSuccess();
 
     $this->assertEquals($result, $expectedResult);
   }
 
-  public function providerTestSuccessResponseHTTPCodes() {
+  public function providerTestSuccessResponseHttpCodes() {
     return array(
-      array(200, true),
-      array(255, true),
-      array(299, true),
-      array(300, false),
-      array(400, false),
+      array(200, TRUE),
+      array(255, TRUE),
+      array(299, TRUE),
+      array(300, FALSE),
+      array(400, FALSE),
     );
   }
 
   /**
-   * Tests the return of HTTP status codes.
+   * Tests the return of Http status codes.
    *
-   * @param string $httpCode The HTTP code we want to test
-   * @param string $expectedCode What we expect the result to be
+   * @param string $httpCode 
+   *        The Http code we want to test.
+   * @param string $expectedCode 
+   *        What we expect the result to be.
    *
-   * @dataProvider providerTestReturnOfHTTPStatusCodes
+   * @dataProvider providerTestReturnOfHttpStatusCodes
    */
-  public function testReturnOfHTTPStatusCodes($httpCode, $expectedCode) {
+  public function testReturnOfHttpStatusCodes($httpCode, $expectedCode) {
     $response = new Response($httpCode, '', '', '');
 
-    $statusCode = $response->http_status();
+    $statusCode = $response->httpStatus();
 
     $this->assertEquals($statusCode, $expectedCode);
   }
 
-  public function providerTestReturnOfHTTPStatusCodes() {
+  /**
+   * ProviderTestReturnOfHttpStatusCodes.
+   * @return array
+   *         Array of status codes.
+   */
+  public function providerTestReturnOfHttpStatusCodes() {
     return array(
       array(200, 200),
       array(300, 300),
@@ -73,6 +80,9 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
+  /**
+   * TestReturnOfResponseDataAsArray.
+   */
   public function testReturnOfResponseDataAsArray() {
     $response = new Response(200, '', '', $this->responseTestData);
 
@@ -81,6 +91,9 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
     $this->assertTrue(is_array($responseArray));
   }
 
+  /**
+   * TestReturnOfEmptyResponseDataAsArray.
+   */
   public function testReturnOfEmptyResponseDataAsArray() {
     $response = new Response(200, '', '', '');
 
@@ -89,6 +102,9 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
     $this->assertTrue(is_array($responseArray));
   }
 
+  /**
+   * TestReturnOfResponseDataAsObject.
+   */
   public function testReturnOfResponseDataAsObject() {
     $response = new Response(200, '', '', $this->responseTestData);
 
@@ -97,6 +113,9 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
     $this->assertTrue(is_object($responseObject));
   }
 
+  /**
+   * TestReturnOfEmptyResponseDataAsObject.
+   */
   public function testReturnOfEmptyResponseDataAsObject() {
     $response = new Response(200, '', '', '');
 
@@ -105,6 +124,9 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
     $this->assertTrue(is_object($responseObject));
   }
 
+  /**
+   * TestReturnOfResponseDataAsRaw.
+   */
   public function testReturnOfResponseDataAsRaw() {
     $response = new Response(200, '', '', $this->responseTestData);
 
