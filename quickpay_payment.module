@@ -135,7 +135,7 @@ function quickpay_payment_api_view($order_id, $transaction_id, $payment_module) 
  *         Array of payment cards.
  */
 function quickpay_payment_cards() {
-  $images_path = drupal_get_path('module', 'quickpay_payment') . '/images/';
+  $images_path = base_path() . drupal_get_path('module', 'quickpay_payment') . '/images/';
   return array(
     'dankort' => array(
       'name' => t('Dankort'),
