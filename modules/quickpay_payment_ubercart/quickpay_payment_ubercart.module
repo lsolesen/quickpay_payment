@@ -1,0 +1,456 @@
+<?php
+/**
+ * @file
+ * Implementation of the QuickPay payment method for Ubercart.
+ */
+
+use QuickPay\QuickPay as QuickPay;
+
+
+/**
+ * Implements hook_uc_payment_method().
+ */
+function quickpay_payment_ubercart_uc_payment_method() {
+  $title = t('Credit card (via Quickpay secure gateway.)');
+
+  $methods[] = array(
+    'id' => 'quickpay',
+    'name' => t('QuickPay'),
+    'title' => t('Credit card'),
+    'review' => t('Credit card'),
+    'desc' => t('Pay securely by credit card via QuickPay.'),
+    'callback' => 'uc_payment_method_quickpay',
+    'weight' => 4,
+    'checkout' => TRUE,
+    'no_gateway' => TRUE,
+  );
+
+  return $methods;
+}
+
+
+/**
+ * Creates a callback endpoint used for processing QuickPay responses.
+ *
+ * @return array
+ *         the endpoint data.
+ */
+function quickpay_payment_ubercart_menu() {
+  $items = array();
+  $items['quickpay-payment-ubercart/callback'] = array(
+    'page callback' => 'quickpay_payment_ubercart_callback',
+    'page arguments' => array(),
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Adds the quickpay review form (a send button and some hidden fields used by
+ * quickpay) to ubercarts checkout review form.
+ */
+function quickpay_payment_ubercart_form_uc_cart_checkout_review_form_alter(&$form, &$form_state) {
+  if (($order_id = intval($_SESSION['cart_order'])) > 0) {
+    $order = uc_order_load($order_id);
+
+    // Only add the quickpay review form if the user has selected the quickpay
+    // payment method.
+    if ($order->payment_method == 'quickpay') {
+      $quickpay_form = drupal_get_form('quickpay_payment_ubercart_review_form', $order);
+
+      // Remove the existing submit button.
+      unset($form['actions']['submit']);
+
+      // And add the quickpay form after the current review form.
+      // The div just groups the 2 forms, perhaps it should be removed.
+      $form['#prefix'] = '<div>';
+      $form['#suffix'] = drupal_render($quickpay_form) . '</div>';
+    }
+  }
+}
+
+function quickpay_payment_ubercart_form_uc_cart_checkout_form_alter(&$form, &$form_state) {
+  $settings = variable_get('quickpay_payment_ubercart_settings');
+  $payment_methods = quickpay_payment_filter_payment_methods($settings['paymentMethods']);
+  
+  // Prepare payments card array.
+  $all_cards = quickpay_payment_cards();
+
+  // Prepare empty var
+  $value = '';
+
+  // Loop through all cards and see if they have been chosen.
+  foreach ($payment_methods as $payment_method) {
+    if (array_key_exists($payment_method, $all_cards)) {
+      $value .= sprintf('<img class="commerce-quickpay-method__icon" src="%s" title="%s" />', $all_cards[$payment_method]['image'], $all_cards[$payment_method]['name']);
+    }
+  }
+
+  $form['panes']['payment']['payment_method']['#options']['quickpay'] .= $value;;
+}
+
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * This adds the quickpay fieldset to the ubercart order payment tab.
+ */
+function quickpay_payment_ubercart_form_uc_payment_by_order_form_alter(&$form, &$form_state) {
+  if (quickpay_payment_ubercart_can_handle_payments()) {
+    $order = $form_state['build_info']['args'][0];
+
+    // Stop if there is no transaction ID
+    if (!isset($order->data['quickpay_transaction_id'])) {
+      return;
+    }
+
+    // Settings
+    $settings = variable_get('quickpay_payment_ubercart_settings');
+
+    $transaction_append = '';
+
+    if (isset($order->data['quickpay_transaction_test_mode']) && $order->data['quickpay_transaction_test_mode'] == true) {
+      $transaction_append = ' - ' . t('TEST TRANSACTION');
+    }
+
+    // Modify order id
+    $order_id_reference = QuickpayPaymentHelper::orderNumberStandardize($order->order_id);
+    $order_id_reference = QuickpayPaymentHelper::addPrefixToOrder($order_id_reference, $settings['orderNumberPrefix']);
+  
+    $form['quickpay_payment_ubercart_api_view'] = array(
+      '#markup' => quickpay_payment_api_view($order->order_id, $order_id_reference, $order->data['quickpay_transaction_id'], 'quickpay_payment_ubercart', $transaction_append)
+    );    
+  }
+
+}
+
+/**
+ * Add the quickpay settings form to the quickpay payment method.
+ */
+function uc_payment_method_quickpay($op) {
+  switch ($op) {
+    case 'cart-details':
+      return;
+      break;
+
+    case 'settings':
+      $settings = variable_get('quickpay_payment_ubercart_settings', array());
+
+      // Make the fieldset, where we place the settings form, and
+      // additional settings.
+      $form['quickpay_payment_ubercart_settings'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Quickpay settings'),
+        '#tree' => TRUE,
+      );
+
+      // Add the Quickpay settings form.
+      $form['quickpay_payment_ubercart_settings'] += QuickpayPaymentSettings::settingsForm($settings);
+
+      // Add settings, allowing the user to specify custom callback urls.
+      $form['quickpay_payment_ubercart_settings']['callbacks'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Callbacks'),
+        '#description' => t('Quickpay callback urls.'),
+        '#tree' => TRUE,
+      );
+      $form['quickpay_payment_ubercart_settings']['callbacks']['continue_url'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Continue URL'),
+        '#description' => t('After a successful transaction.'),
+        '#default_value' => (isset($settings['callbacks']['continue_url']) ? $settings['callbacks']['continue_url'] : 'cart/checkout/complete/'),
+      );
+      $form['quickpay_payment_ubercart_settings']['callbacks']['cancel_url'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Cancel URL'),
+        '#description' => t('If the user cancels the quickpay transaction.'),
+        '#default_value' => (isset($settings['callbacks']['cancel_url']) ? $settings['callbacks']['cancel_url'] : 'cart/checkout/'),
+      );
+
+      $form = system_settings_form($form);
+      return $form;
+      break;
+
+  }
+}
+
+/**
+ * The form added to the ubercart reviews form, at the end of a checkout.
+ */
+function quickpay_payment_ubercart_review_form($form, &$form_state, $order) {
+  try {
+    $settings = variable_get('quickpay_payment_ubercart_settings');
+
+    // Create an API client instance.
+    $api = new QuickPay(":{$settings['apiApiKey']}");
+
+    // Prepare payment ID var
+    $payment_id = null;
+
+    // Check if there is already a payment link for this order.
+    if(isset($order->data['payment_id'])) {
+      $payment_id = $order->data['payment_id'];
+    } else {
+      // Make sure the order number is at least 4 digits.
+      $orderNumberStandardized = QuickpayPaymentHelper::orderNumberStandardize($order->order_id);
+      // Create payment.
+      $payment_response = $api->request->post('/payments', $payment_params = array(
+        'currency' => $order->currency,
+        'order_id' => QuickpayPaymentHelper::addPrefixToOrder( $orderNumberStandardized, $settings['orderNumberPrefix'] ),
+        'text_on_statement' => $settings['textOnStatement'],
+        'variables' => array(
+          'orderNumber' => $order->order_id
+        )
+      ));
+      
+      // If the payment was created, lets go create a payment link.
+      if ($payment_response->isSuccess()) {
+        // Get the payment data.
+        $payment = $payment_response->asObject();
+        $payment_id = $payment->id;
+      }
+      else {
+        echo 'Payment error: '; print_r($payment_response->asRaw());
+        echo 'Payment request'; print_r($payment_params);
+        exit;
+      }
+    }
+
+    if (! is_null($payment_id)) {
+        // Create payment methods string.
+        $payment_methods_array = quickpay_payment_filter_payment_methods($settings['paymentMethods']);
+        $payment_methods = implode(',', $payment_methods_array);
+
+        // Calculate taxes
+        $tax_amount = 0;
+        $taxes = uc_taxes_calculate($order);
+
+        foreach ($taxes as $tax) {
+          $tax_amount += $tax->amount;
+        }
+
+        $payment_link_response = $api->request->put("/payments/{$payment_id}/link", $payment_links_params = array(
+          'amount' => QuickpayPaymentHelper::priceMultiply($order->order_total),
+          'autocapture' => $settings['autocapture'],
+          'autofee' => $settings['autofee'],
+          'branding_id' => $settings['brandingId'],
+          'payment_methods' => $payment_methods,
+          'agreement_id' => $settings['agreementId'],
+          'language' => $settings['language'],
+          'continueurl' => url($settings['callbacks']['continue_url'], array('absolute' => TRUE)),
+          'cancelurl' => url($settings['callbacks']['cancel_url'], array('absolute' => TRUE)),
+          'callbackurl' => url('quickpay-payment-ubercart/callback', array('absolute' => TRUE)),
+          'category' => $settings['paii']['category'],
+          'reference_title' => $settings['paii']['referenceTitle'],
+          'product_id' => $settings['paii']['productId'],
+          'vat_amount' => QuickpayPaymentHelper::priceMultiply($tax_amount),
+          'customer_email' => $order->primary_email,
+          'google_analytics_tracking_id' => $settings['googleAnalytics']['trackingId'],
+          'google_analytics_client_id' => $settings['googleAnalytics']['clientId']
+        ));
+
+        if ($payment_link_response->isSuccess()) {
+
+          // The do_complete session variable is used by ubercart, when it's completing
+          // the order, see the uc_cart_checkout_complete() function in
+          // uc_cart.pages.inc. If the user has specified their own custom callback
+          // function, this step isn't needed, but to avoid confusion in the settings
+          // form it's always set.
+          $_SESSION['uc_checkout'][$order->order_id]['do_complete'] = TRUE;
+
+          $payment_link = $payment_link_response->asObject();
+
+          $payment_link = $payment_link->url;
+
+          // Save the payment link for later reference
+          $order->data['payment_id'] = $payment_id;
+
+          // Save order
+          uc_order_save($order);
+        }
+        else {
+          echo 'Payment link error: '; print_r($payment_link_response->asRaw());
+          echo 'Payment link request'; print_r($payment_links_params);
+          exit;
+        }
+    }
+
+    // Prepare form
+    $form['#action'] = $payment_link;
+    $form['#method'] = 'GET';
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Go to payment'),
+    );
+
+    return $form;
+   
+  }
+  catch (Exception $e) {
+    echo $e->getMessage();
+  }
+
+  return array();
+}
+
+
+/**
+ * Process callback from QuickPay
+ */
+function quickpay_payment_ubercart_callback() {
+  // Check for the QuickPay checksum.
+  if (!isset($_SERVER["HTTP_QUICKPAY_CHECKSUM_SHA256"])) {
+    exit;
+  }
+
+  // Fetch the callback response body.
+  $response_body = file_get_contents("php://input");
+
+  // Callback data as JSON.
+  $json = json_decode($response_body);
+
+  // Save settings to order object
+  $settings = variable_get('quickpay_payment_ubercart_settings');
+
+  // Hashed response.
+  $hash = hash_hmac('sha256', $response_body, $settings['agreementPrivateKey']);
+
+  // Callback checksum control.
+  if ($hash != $_SERVER["HTTP_QUICKPAY_CHECKSUM_SHA256"]) {
+    exit;
+  }
+
+  // Get the order number
+  $orderNumber = isset($json->variables->orderNumber) ? $json->variables->orderNumber : $json->order_id;
+
+  // Load order object.
+  $order = uc_order_load((int) $orderNumber);
+  
+  // Add settings to order object
+  $order->data['quickpay_settings'] = variable_get('quickpay_payment_ubercart_settings');
+  
+  // Add transaction ID to order object
+  $order->data['quickpay_transaction_id'] = $json->id;
+
+  // Save the order
+  uc_order_save($order);
+
+  // Get latest transaction operation.
+  $operation = end($json->operations);
+
+  // Create transaction.
+  $transaction = new stdClass();
+  $transaction->message = sprintf('%s - %s', ucfirst($operation->type), $operation->qp_status_msg);
+  $transaction->amount = QuickpayPaymentHelper::priceNormalize($operation->amount);
+
+  // The transaction was accepted.
+  if ($json->accepted) {
+    switch ($operation->type) {
+      case 'authorize':
+        uc_payment_enter((int) $orderNumber, 'quickpay', $transaction->amount, 0, $response_body, $transaction->message);
+        break;
+    }
+  }
+  exit;
+}
+
+
+/**
+ * Implements hook_quickpay_payment_ajax_handler().
+ *
+ * @throws Exception
+ *         Throws an error exception.
+ */
+function quickpay_payment_ubercart_quickpay_payment_ajax_handler($action, $transaction_id, $order_id) {
+  // If the user has insufficient rights, exit.
+  if (!quickpay_payment_ubercart_can_handle_payments()) {
+    exit;
+  }
+
+  // Load order object.
+  $order = uc_order_load($order_id);
+
+  // Load payment method object.
+  $settings = variable_get('quickpay_payment_ubercart_settings');
+
+  // Get API key from settings.
+  $api_key = $settings['apiApiKey'];
+
+  // Instantiate an API connection.
+  $api = new QuickPay(":{$api_key}");
+
+
+  switch ($action) {
+    /* CAPTURE */
+    case 'capture':
+      // Make API request.
+      $request = $api->request->post("/payments/{$transaction_id}/capture", array(
+        'amount' => QuickpayPaymentHelper::priceMultiply($order->order_total),
+      ));
+
+      // Was the request successful?
+      if ($request->isSuccess()) {
+        // Update revision log.
+        uc_order_update_status($order_id, 'completed');
+
+        // Print JSON object.
+        echo QuickpayPaymentJSON::fromArray($request->asArray());
+        exit;
+      }
+      break;
+
+    /* CANCEL */
+    case 'cancel':
+      // Make API request.
+      $request = $api->request->post("/payments/{$transaction_id}/cancel");
+
+      // Was the request successful?
+      if ($request->isSuccess()) {
+        // Update order status
+        uc_order_update_status($order_id, 'canceled');
+
+        // Print JSON object.
+        echo QuickpayPaymentJSON::fromArray($request->asArray());
+        exit;
+      }
+      break;
+
+    /* STATUS */
+    case 'status':
+      // Make API request.
+      $request = $api->request->get("/payments/{$transaction_id}");
+
+      // Was the request successful?
+      if ($request->isSuccess()) {
+        // Print JSON object.
+        echo QuickpayPaymentJSON::fromArray($request->asArray());
+        exit;
+      }
+      break;
+
+    /* REFUND */
+    case 'refund':
+      $request = $api->request->post("/payments/{$transaction_id}/refund", array(
+        'amount' => QuickpayPaymentHelper::priceMultiply($order->order_total),
+      ));
+
+      if ($request->isSuccess()) {
+        // Update revision log.
+        uc_order_update_status($order_id, 'completed');
+
+        // Print JSON object.
+        echo QuickpayPaymentJSON::fromArray($request->asArray());
+        exit;
+      }
+      break;
+  }
+  throw new Exception(sprintf("Unknown payment action: %s", $action));
+}
+
+function quickpay_payment_ubercart_can_handle_payments() {
+  return user_access('view payments');
+}

@@ -5,6 +5,11 @@
   border: 1px solid #e0e0e0;
   border-radius: 5px;
   padding: 20px;
+  clear:both;
+}
+
+#quickpay_payment[data-quickpay-gateway="quickpay_payment_ubercart"] {
+  margin-bottom:20px;
 }
 
 #quickpay_payment.loading::after {
@@ -36,24 +41,28 @@
   max-height: 20px;
 }
 
-#edit-parameter-payment-method-settings-payment-method-settings-paymentmethods {
+#edit-parameter-payment-method-settings-payment-method-settings-paymentmethods,
+#edit-quickpay-payment-ubercart-settings-paymentmethods {
   max-width: 800px;
 }
 
-#edit-parameter-payment-method-settings-payment-method-settings-paymentmethods::after {
+#edit-parameter-payment-method-settings-payment-method-settings-paymentmethods::after,
+#edit-quickpay-payment-ubercart-settings-paymentmethods::after {
   display: table;
   content: "";
   clear: both;
 }
 
 
-#edit-parameter-payment-method-settings-payment-method-settings-paymentmethods input[type="checkbox"] {
+#edit-parameter-payment-method-settings-payment-method-settings-paymentmethods input[type="checkbox"],
+#edit-quickpay-payment-ubercart-settings-paymentmethods input[type="checkbox"] {
   display: inline-block;
   margin-right: 5px;
 }
 
 @media (min-width: 768px) {
-  #edit-parameter-payment-method-settings-payment-method-settings-paymentmethods > div {
+  #edit-parameter-payment-method-settings-payment-method-settings-paymentmethods > div,
+  #edit-quickpay-payment-ubercart-settings-paymentmethods > div {
     float: left;
     width: 50%;
     box-sizing: border-box;

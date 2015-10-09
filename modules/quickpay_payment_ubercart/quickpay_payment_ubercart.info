@@ -1,0 +1,6 @@
+name = QuickPay Payment
+description = Process Ubercart payments using QuickPay.
+package = Ubercart - payment
+dependencies[] = quickpay_payment
+dependencies[] = uc_payment
+core = 7.x
