@@ -25,3 +25,17 @@ AUTHOR / MAINTAINER
 ===================
 Patrick Tolvstein, Perfect Solution ApS
 info@perfect-solution.dk
+
+CHANGELOG
+===================
+= 1.1.0 - 29/10-2015 =
+* Add UberCart module to the project.
+* Add text_on_statement setting.
+* Add order number prefix on order numbers sent to QuickPay.
+* Add Paii support.
+* Add customer email for PayPal support.
+* Add Google Analytics.
+* Add permission check on callback handlers.
+* Fix problem with card icons not being shown correctly on some installs.
+* Add order number reference on API payment authorizations.
+* Add tax support for Paii.

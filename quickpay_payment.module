@@ -6,6 +6,8 @@
 
 use QuickPay\QuickPay as QuickPay;
 
+define('QUICKPAY_PAYMENT_VERSION', '1.1.0');
+
 // Load module files.
 module_load_include('php', 'quickpay_payment', 'includes/QuickPay/QuickPay');
 module_load_include('php', 'quickpay_payment', 'includes/classes/settings');

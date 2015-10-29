@@ -290,7 +290,7 @@ class QuickpayPaymentSettings {
     $form['googleAnalytics'] = array(
       '#type' => 'fieldset',
       '#title' => t('Google Analytics'),
-      '#description' => t('Settings related to Paii'),
+      '#description' => t('Settings related to Google Analytics'),
       '#tree' => TRUE,
     );
     $form['googleAnalytics']['clientId'] = array(
