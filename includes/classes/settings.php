@@ -27,6 +27,13 @@ class QuickpayPaymentSettings {
   protected $autocapture;
   protected $autofee;
   protected $brandingId;
+  protected $orderNumberPrefix;
+  protected $textOnStatement;
+  protected $paiiCategory;
+  protected $paiiReferenceTitle;
+  protected $paiiProductId;
+  protected $analyticsClientId;
+  protected $analyticsTrackingId;
 
   /**
    * Construct.
@@ -48,6 +55,15 @@ class QuickpayPaymentSettings {
     $this->set('autocapture');
     $this->set('autofee');
     $this->set('brandingId');
+    $this->set('orderNumberPrefix');
+    $this->set('textOnStatement');
+
+    $this->setFromFieldset('paii', 'category', 'paiiCategory');
+    $this->setFromFieldset('paii', 'productId', 'paiiProductId');
+    $this->setFromFieldset('paii', 'referenceTitle', 'paiiReferenceTitle');
+    
+    $this->setFromFieldset('googleAnalytics', 'clientId', 'analyticsClientId');
+    $this->setFromFieldset('googleAnalytics', 'TrackingId', 'analyticsTrackingId');
   }
 
   /**
@@ -59,6 +75,26 @@ class QuickpayPaymentSettings {
   private function set($key) {
     if (isset($this->options[$key])) {
       $this->$key = $this->options[$key];
+    }
+  }
+
+  /**
+   * Fast way of setting an options property from fieldset.
+   *
+   * @param string $fieldset
+   *        The setting fieldset key to retrieve.
+   * @param string $key
+   *        The setting key to retrieve.
+   * @param string $property
+   *        The class property to set.
+   */
+  private function setFromFieldset($fieldset, $key, $property = null) {
+    if (isset($this->options[$fieldset]) && isset($this->options[$fieldset][$key])) {
+      if (is_null($property)) {
+        $this->$key = $this->options[$fieldset][$key];
+      } else {
+        $this->$property = $this->options[$fieldset][$key];
+      }
     }
   }
 
@@ -131,6 +167,17 @@ class QuickpayPaymentSettings {
       'autocapture' => FALSE,
       'autofee' => FALSE,
       'brandingId' => '',
+      'orderNumberPrefix' => '',
+      'textOnStatement' => '',
+      'paii' => array(
+        'category' => '',
+        'referenceTitle' => '',
+        'productId' => '',
+      ),
+      'googleAnalytics' => array(
+        'clientId' => '',
+        'trackingId' => ''
+      )
     );
 
     // Gateway name.
@@ -193,11 +240,25 @@ class QuickpayPaymentSettings {
       '#default_value' => $settings['brandingId'],
     );
 
+    $form['orderNumberPrefix'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Prefix Order Number'),
+      '#description' => t('Type in a value, if you want to prefix the order numbers in the QuickPay manager. <br />This will not affect the order numbers on the shop level.'),
+      '#default_value' => $settings['orderNumberPrefix'],
+    );
+
+    $form['textOnStatement'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Text on Statement'),
+      '#description' => t('Text to be displayed on cardholder’s statement. Max 22 ASCII chars. Currently supported by Clearhaus only.'),
+      '#default_value' => $settings['textOnStatement'],
+    );
+
     $form['paymentMethods'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Payment Methods'),
       '#options' => self::paymentMethodOptions(),
-      '#description' => t('Recommended: creditcard. Type in the cards you wish to accept (comma separated). See the valid payment types here: <b>http://tech.quickpay.net/appendixes/payment-methods/</b>'),
+      '#description' => t(''),
       '#default_value' => $settings['paymentMethods'],
     );
 
@@ -223,6 +284,55 @@ class QuickpayPaymentSettings {
       '#title' => t('Autofee'),
       '#description' => t('If enabled, the fee charged by the acquirer will be calculated and added to the transaction amount.'),
       '#default_value' => $settings['autofee'],
+    );
+
+    // Google Analytics
+    $form['googleAnalytics'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Google Analytics'),
+      '#description' => t('Settings related to Paii'),
+      '#tree' => TRUE,
+    );
+    $form['googleAnalytics']['clientId'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Client ID'),
+      '#description' => t('Send events to Google Analytics.'),
+      '#default_value' => $settings['googleAnalytics']['clientId'],
+    );
+
+    $form['googleAnalytics']['trackingId'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Tracking ID'),
+      '#description' => t('Send events to Google Analytics.'),
+      '#default_value' => $settings['googleAnalytics']['trackingId'],
+    );
+
+    // Paii
+    $form['paii'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Paii'),
+      '#description' => t('Settings related to Paii'),
+      '#tree' => TRUE,
+    );
+    $form['paii']['category'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Paii - Category'),
+      '#description' => t('Required for Paii. Category.'),
+      '#default_value' => $settings['paii']['category'],
+    );
+
+    $form['paii']['referenceTitle'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Reference Title'),
+      '#description' => t('Required for Paii. Referende title.'),
+      '#default_value' => $settings['paii']['referenceTitle'],
+    );
+
+    $form['paii']['productId'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Product ID'),
+      '#description' => t('Required for Paii. Product id.'),
+      '#default_value' => $settings['paii']['productId'],
     );
 
     return $form;

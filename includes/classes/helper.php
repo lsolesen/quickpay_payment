@@ -77,4 +77,38 @@ class QuickpayPaymentHelper {
     return $log_message;
   }
 
+
+  /**
+   * Returns prefixed order number
+   *
+   * @param string $orderNumber
+   *        The order number.
+   *
+   * @param string $prefix
+   *        The prefix.
+   *
+   * @return string
+   *         A revision string.
+   */  
+  public static function addPrefixToOrder($orderNumber, $prefix) {
+    return $prefix . $orderNumber;
+  }
+
+
+  /**
+   * Removes prefix from the order number.
+   *
+   * @param string $orderNumber
+   *        The order number.
+   *
+   * @param string $prefix
+   *        The prefix.
+   *
+   * @return string
+   *         A revision string.
+   */  
+  public static function removePrefixFromOrder($orderNumber, $prefix) {
+    return str_replace($prefix, '', $orderNumber);
+  }
+
 }

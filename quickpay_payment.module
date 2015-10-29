@@ -108,10 +108,11 @@ function quickpay_payment_ajax() {
  * @return string
  *         HTML output.
  */
-function quickpay_payment_api_view($order_id, $transaction_id, $payment_module) {
+function quickpay_payment_api_view($order_id, $order_id_reference, $transaction_id, $payment_module) {
   $html = '<div id="quickpay_payment" class="quickpay_payment" data-quickpay-gateway="' . $payment_module . '">';
   $html .= sprintf('<h1>%s</h1>', t('QuickPay API'));
-  $html .= sprintf('<div class="%s"><strong>%s:</strong> <span id="quickpay_payment__order-id">%s</span></div>', '', t('Order ID'), $order_id);
+  $html .= sprintf('<div class="%s"><strong>%s:</strong> <span id="quickpay_payment__order-id">%s</span></div>', '', t('Order ID - Shop'), $order_id);
+  $html .= sprintf('<div class="%s"><strong>%s:</strong> <span id="quickpay_payment__order-id-reference">%s</span></div>', '', t('Order ID - QuickPay'), $order_id_reference);
   $html .= sprintf('<div class="%s"><strong>%s:</strong> <span id="quickpay_payment__transaction-id">%s</span></div>', '', t('Transaction ID'), $transaction_id);
   $html .= sprintf('<div class="%s"><strong>%s:</strong> <span id="quickpay_payment__status"></span></div>', '', t('Last Payment Operation'));
   $html .= sprintf('<div id="quickpay_payment__test">%s</div>', t('TEST TRANSACTION'));
@@ -135,7 +136,9 @@ function quickpay_payment_api_view($order_id, $transaction_id, $payment_module) 
  *         Array of payment cards.
  */
 function quickpay_payment_cards() {
-  $images_path = base_path() . drupal_get_path('module', 'quickpay_payment') . '/images/';
+  global $base_path;
+  $images_path = $base_path . drupal_get_path('module', 'quickpay_payment') . '/images/';
+
   return array(
     'dankort' => array(
       'name' => t('Dankort'),

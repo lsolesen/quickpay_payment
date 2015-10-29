@@ -64,8 +64,11 @@ function quickpay_payment_commerce_callback() {
   // Callback data as JSON.
   $json = json_decode($response_body);
 
+  // Get the order number
+  $orderNumber = isset($json->variables->orderNumber) ? $json->variables->orderNumber : $json->order_id;
+
   // Load order object.
-  $order = commerce_order_load((int) $json->order_id);
+  $order = commerce_order_load((int) $orderNumber);
 
   // Load payment method object.
   $payment_method = commerce_payment_method_instance_load($order->data['payment_method']);
@@ -85,7 +88,7 @@ function quickpay_payment_commerce_callback() {
   $operation = end($json->operations);
 
   // Create transaction.
-  $transaction = commerce_payment_transaction_new($payment_method['method_id'], $json->order_id);
+  $transaction = commerce_payment_transaction_new($payment_method['method_id'], $orderNumber);
   $transaction->instance_id = $payment_method['instance_id'];
   $transaction->remote_id = $json->id;
   $transaction->message = sprintf('%s - %s', ucfirst($operation->type), $operation->qp_status_msg);
@@ -172,11 +175,30 @@ function quickpay_payment_commerce_redirect_form($form, &$form_state, $order, $p
 
     // Get order wrapper.
     $order_wrapper = entity_metadata_wrapper('commerce_order', $order);
+    
+    // Order total object
+    $order_total = $order_wrapper->commerce_order_total->value();
+
+    // Order currency
+    $currency_code = $order_wrapper->commerce_order_total->currency_code->value();
+
+    // Prepare tax amount
+    $tax_amount = 0;
+    if (module_exists('commerce_tax')) {
+      $tax_amount = commerce_tax_total_amount($order_total['data']['components'], TRUE, $currency_code);
+    }
+
+    // Make sure the order number is at least 4 digits.
+    $orderNumberStandardized = QuickpayPaymentHelper::orderNumberStandardize($order->order_number);
 
     // Create payment.
     $payment_response = $api->request->post('/payments', array(
-      'currency' => $order_wrapper->commerce_order_total->currency_code->value(),
-      'order_id' => QuickpayPaymentHelper::orderNumberStandardize($order->order_number),
+      'currency' => $currency_code,
+      'order_id' => QuickpayPaymentHelper::addPrefixToOrder( $orderNumberStandardized, $settings['orderNumberPrefix'] ),
+      'text_on_statement' => $settings['textOnStatement'],
+      'variables' => array(
+        'orderNumber' => $order->order_number
+      )
     ));
 
     // If the payment was created, lets go create a payment link.
@@ -198,6 +220,13 @@ function quickpay_payment_commerce_redirect_form($form, &$form_state, $order, $p
         'continueurl' => url('checkout/' . $order->order_id . '/payment/return/' . $order->data['payment_redirect_key'], array('absolute' => TRUE)),
         'cancelurl' => url('checkout/' . $order->order_id . '/payment/back/' . $order->data['payment_redirect_key'], array('absolute' => TRUE)),
         'callbackurl' => url('commerce-quickpay-payment/callback', array('absolute' => TRUE)),
+        'category' => $settings['paii']['category'],
+        'reference_title' => $settings['paii']['referenceTitle'],
+        'product_id' => $settings['paii']['productId'],
+        'vat_amount' => $tax_amount,
+        'customer_email' => $order->mail,
+        'google_analytics_tracking_id' => $settings['googleAnalytics']['trackingId'],
+        'google_analytics_client_id' => $settings['googleAnalytics']['clientId']
       ));
 
       if ($payment_link_response->isSuccess()) {
@@ -233,7 +262,7 @@ function quickpay_payment_commerce_redirect_form($form, &$form_state, $order, $p
  *         The cache.
  */
 function quickpay_payment_commerce_views_post_render(&$view, &$output, &$cache) {
-  if ($view->name == 'commerce_payment_order') {
+  if ($view->name == 'commerce_payment_order' && quickpay_payment_commerce_can_handle_payments()) {
     // Get all transactions from this module.
     $transactions = array_filter($view->result, function($t) {
       return 'quickpay_payment_commerce' == $t->commerce_payment_transaction_payment_method;
@@ -249,8 +278,21 @@ function quickpay_payment_commerce_views_post_render(&$view, &$output, &$cache) 
       // Get order ID.
       $order_id = $transaction->commerce_payment_transaction_order_id;
 
+      // Load order object.
+      $order = commerce_order_load($order_id);
+
+      // Load payment method object.
+      $payment_method = commerce_payment_method_instance_load($order->data['payment_method']);
+
+      // Settings
+      $settings = $payment_method['settings'];
+
+      // Modify order id
+      $order_id_reference = QuickpayPaymentHelper::orderNumberStandardize($order_id);
+      $order_id_reference = QuickpayPaymentHelper::addPrefixToOrder($order_id_reference, $settings['orderNumberPrefix']);
+
       // Append the output with the QuickPay API box.
-      $output .= quickpay_payment_api_view($order_id, $transaction_id, basename(__FILE__, '.module'));
+      $output .= quickpay_payment_api_view($order_id, $order_id_reference, $transaction_id, basename(__FILE__, '.module'));
 
       // Add clearfix class to the view-commerce-payment-order container.
       // Fixes float problems.
@@ -267,6 +309,11 @@ function quickpay_payment_commerce_views_post_render(&$view, &$output, &$cache) 
  *         Throws an error exception.
  */
 function quickpay_payment_commerce_quickpay_payment_ajax_handler($action, $transaction_id, $order_id) {
+  // Exit if the user has insufficient rights.
+  if (!quickpay_payment_commerce_can_handle_payments()) {
+    exit;
+  }
+
   // Load order object.
   $order = commerce_order_load($order_id);
 
@@ -477,4 +524,12 @@ function quickpay_payment_commerce_form_commerce_checkout_form_alter(&$form, &$f
 function quickpay_payment_commerce_order__authorize($order, $transaction) {
   // Save the transaction.
   commerce_payment_transaction_save($transaction);
+}
+
+
+/**
+ * Determines if the user can handle payments.
+ */
+function quickpay_payment_commerce_can_handle_payments() {
+  return user_access('administer payments');
 }
